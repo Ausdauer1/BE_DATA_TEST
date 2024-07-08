@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScrapModule } from './scrap/scrap.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PLAYER_INFO } from './scrap/entity/playerInfo.entity';
+
 
 @Module({
   imports: [
@@ -13,7 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'admin',
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
-      entities: [], 
+      entities: [PLAYER_INFO], 
       synchronize: true 
     }), 
     ScrapModule

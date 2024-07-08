@@ -7,8 +7,9 @@ export class ScrapController {
 
   // /scraping/players 엔드포인트에서 GET 요청을 처리합니다.
   @Get('players')
-  async getPlayers(@Query('url') url: string) {
+  async getPlayers(@Query('team') team: string) {
     // ScrapingService를 사용하여 주어진 URL에서 선수 정보를 스크래핑합니다.
-    return this.scrapingService.scrapeBaseballPlayers(url);
+    return this.scrapingService.scrapeBaseballPlayers(team);
   }
+  
 }

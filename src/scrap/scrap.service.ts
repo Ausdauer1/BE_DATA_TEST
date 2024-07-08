@@ -1,15 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
+import { InjectRepository } from '@nestjs/typeorm';
+import { PLAYER_INFO } from './entity/playerInfo.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ScrapService {
-  async scrapeBaseballPlayers(url: string) {
+  constructor(
+    @InjectRepository(PLAYER_INFO)
+    private catsRepository: Repository<PLAYER_INFO>
+  ){}
+
+  
+  async scrapeBaseballPlayers(team: string) {
 
     const browser = await puppeteer.launch({headless: false});
     const page = await browser.newPage();
     await page.goto("https://www.koreabaseball.com/Player/Search.aspx", { waitUntil: 'domcontentloaded', timeout: 10000 });  
-    await page.select('select[name="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlTeam"]','HT')
+    await page.select('select[name="ctl00$ctl00$ctl00$cphContents$cphContents$cphContents$ddlTeam"]',`${team}`)
     
     
     const getLoad = () => { 
@@ -19,7 +28,6 @@ export class ScrapService {
         let $ = cheerio.load(content);
         
         let lastLineData = $("#cphContents_cphContents_cphContents_udpRecord > div.inquiry > table > tbody > tr:nth-child(20) > td:nth-child(7)").text()
-        let test = $("cphContents_cphContents_cphContents_udpRecord > div.inquiry > table > tbody > tr").length
 
         if (lastLineData === '' || lastLineData === null || lastLineData === undefined) {
           console.log('tic')
