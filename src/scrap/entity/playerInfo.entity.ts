@@ -6,8 +6,8 @@ export class PLAYER_INFO {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("int", {width: 3, nullable: true})
-    back_number: number;
+    @Column("varchar", {length: 3, nullable: true})
+    back_number: string;
 
     @Column("varchar", {length : 5})
     name: string;
@@ -33,11 +33,14 @@ export class PLAYER_INFO {
     @Column("varchar", {length : 50})
     career: string;
 
-    @Column("int", {width: 10})
+    @Column("int", {width: 10, nullable: true})
     kbo_id: number;
 
     @Column("int", {width: 10, nullable: true})
     statiz_id: number;
+
+    @Column("char", {length : 10, default: "n"})
+    del_yn: string;
 
     @CreateDateColumn()
     created_at: Date; // Creation date

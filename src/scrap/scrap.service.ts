@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 export class ScrapService {
   constructor(
     @InjectRepository(PLAYER_INFO)
-    private catsRepository: Repository<PLAYER_INFO>
+    private playerInfoRepository: Repository<PLAYER_INFO>
   ){}
 
   
@@ -54,8 +54,32 @@ export class ScrapService {
               console.log(loadArr)
               console.log(tableLength)
               for (let i = 1; i <= tableLength; i++) {
+                
+                const playerUrl = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(2) a`).attr('href')
+                
+                const playerInfo = new PLAYER_INFO()
+                playerInfo.back_number = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(1)`).text().trim()
+                playerInfo.name = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(2)`).text().trim()
+                playerInfo.team = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(3)`).text().trim()
+                playerInfo.position = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(4)`).text().trim() === "투수" ? "P" : "B"
+                playerInfo.detail_position = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(4)`).text().trim()
+                playerInfo.birth_date = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(5)`).text().trim()
+                
+                const [height , weight] = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(6)`).text().split(",")
+                playerInfo.height = height.trim()
+                playerInfo.weight = weight.trim()
+                
+                playerInfo.career = $(`.tEx tbody tr:nth-child(${i}) td:nth-child(7)`).text().trim()
+                
+                if (playerUrl.includes("Record")) {
+                  playerInfo.kbo_id = parseInt(playerUrl.substring(playerUrl.indexOf("playerId=") + 9))
+                }
+                
+                await this.playerInfoRepository.save(playerInfo);
+                console.log(playerInfo)
+                
                 // console.log($(`.tEx tbody tr:nth-child(${i}) td:nth-child(1)`).text().trim())
-                console.log($(`.tEx tbody tr:nth-child(${i}) td:nth-child(2)`).text().trim())
+                //console.log($(`.tEx tbody tr:nth-child(${i}) td:nth-child(2)`).text().trim())
                 // console.log($(`.tEx tbody tr:nth-child(${i}) td:nth-child(3)`).text().trim())
                 // console.log($(`.tEx tbody tr:nth-child(${i}) td:nth-child(4)`).text().trim())
                 // console.log($(`.tEx tbody tr:nth-child(${i}) td:nth-child(5)`).text().trim())
@@ -78,12 +102,12 @@ export class ScrapService {
                 console.log($(`.tEx tbody tr:nth-child(1) td:nth-child(1)`).text())
                 go = loadArr.length < 1 ? 1 : loadArr[loadArr.length - 1] === $(`.tEx tbody tr:nth-child(1) td:nth-child(1)`).text() ? 0 : 1 
                 printData()
-              }, 100)
+              }, 500)
             }
           }
           printData()
         }
-      }, 100)
+      }, 500)
     }
 
     getLoad()
