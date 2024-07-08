@@ -24,11 +24,11 @@ export class PLAYER_INFO {
     @Column("char", {length : 10})
     birth_date: string;
 
-    @Column("int", {width: 3})
-    height: number;
+    @Column("varchar", {length: 10})
+    height: string;
 
-    @Column("int", {width: 3})
-    weight: number;
+    @Column("varchar", {length: 10})
+    weight: string;
 
     @Column("varchar", {length : 50})
     career: string;
