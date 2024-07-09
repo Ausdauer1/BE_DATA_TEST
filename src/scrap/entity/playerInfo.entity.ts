@@ -1,4 +1,6 @@
-import { Column, Entity, PrimaryColumn, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { YEAR_RECORD_BATTER } from "./yearRecordBatter.entity";
+import { YEAR_RECORD_PITCHER } from "./yearRecordPitcher.entity";
 
 @Entity()
 export class PLAYER_INFO {
@@ -33,11 +35,11 @@ export class PLAYER_INFO {
     @Column("varchar", {length : 50})
     career: string;
 
-    @Column("int", {width: 10, nullable: true})
-    kbo_id: number;
+    @Column("char", {length: 5, nullable: true, unique: true})
+    kbo_id: string;
 
-    @Column("int", {width: 10, nullable: true})
-    statiz_id: number;
+    @Column("char", {length: 5, nullable: true})
+    statiz_id: string;
 
     @Column("char", {length : 10, default: "n"})
     del_yn: string;
@@ -47,5 +49,11 @@ export class PLAYER_INFO {
 
     @UpdateDateColumn()
     updated_at: Date; // Last updated date
+
+    @OneToMany(() => YEAR_RECORD_BATTER, yrb => yrb.pi)
+    yrbs: YEAR_RECORD_BATTER[];
+
+    @OneToMany(() => YEAR_RECORD_PITCHER, yrp => yrp.pi)
+    yrps: YEAR_RECORD_PITCHER[];
 
 }

@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ScrapModule } from './scrap/scrap.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PLAYER_INFO } from './scrap/entity/playerInfo.entity';
+import { YEAR_RECORD_BATTER } from './scrap/entity/yearRecordBatter.entity';
 
 
 @Module({
@@ -15,7 +16,7 @@ import { PLAYER_INFO } from './scrap/entity/playerInfo.entity';
       username: 'admin',
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
-      entities: [PLAYER_INFO], 
+      entities: [PLAYER_INFO, YEAR_RECORD_BATTER], 
       synchronize: true 
     }), 
     ScrapModule

@@ -11,5 +11,10 @@ export class ScrapController {
     // ScrapingService를 사용하여 주어진 URL에서 선수 정보를 스크래핑합니다.
     return this.scrapingService.scrapeBaseballPlayers(team);
   }
+
+  @Get('records')
+  async getRecords() {
+    return this.scrapingService.scrapPlayersRecords()
+  }
   
 }

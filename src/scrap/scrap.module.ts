@@ -3,10 +3,11 @@ import { ScrapService } from './scrap.service';
 import { ScrapController } from './scrap.controller';
 import { PLAYER_INFO } from './entity/playerInfo.entity'
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PLAYER_INFO])],
+  imports: [TypeOrmModule.forFeature([PLAYER_INFO, YEAR_RECORD_BATTER])],
   // ScrapingService를 모듈에 등록합니다.
   providers: [ScrapService],
   // ScrapingController를 모듈에 등록합니다.
