@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PLAYER_INFO } from './scrap/entity/playerInfo.entity';
 import { YEAR_RECORD_BATTER } from './scrap/entity/yearRecordBatter.entity';
 import { YEAR_RECORD_PITCHER } from './scrap/entity/yearRecordPitcher.entity';
+import { GetModule } from './get/get.module';
 
 
 @Module({
@@ -20,7 +21,7 @@ import { YEAR_RECORD_PITCHER } from './scrap/entity/yearRecordPitcher.entity';
       entities: [PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER], 
       synchronize: true 
     }), 
-    ScrapModule
+    ScrapModule, GetModule
   ],
   controllers: [AppController],
   providers: [AppService],
