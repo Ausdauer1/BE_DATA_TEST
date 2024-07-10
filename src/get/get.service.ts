@@ -70,7 +70,13 @@ export class GetService {
                 detail_position: undefined
             }
         })
-        return [...batterArr,pitcherArr]
+        if (batterArr.length < 1) {
+            return pitcherArr
+        } else if (pitcherArr.length < 1) {
+            return batterArr
+        } else {
+            return [...batterArr,pitcherArr]
+        }
     }   
     
 }
