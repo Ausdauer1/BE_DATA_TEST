@@ -10,12 +10,12 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('/hitter1')
+  @Get('/hitter')
   getObject(): object {
     return this.appService.getObject();
   }
 
-  @Get('/pitcher1')
+  @Get('/pitcher')
   getObject2(): object {
     return this.appService.getObject2();
   }
