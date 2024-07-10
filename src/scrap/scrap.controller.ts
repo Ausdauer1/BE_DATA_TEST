@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ScrapService } from './scrap.service';
 
 @Controller('scraping')
@@ -12,9 +12,14 @@ export class ScrapController {
     return this.scrapingService.scrapeBaseballPlayers(team);
   }
 
-  @Get('records')
-  async getRecords() {
+  @Get('recordB')
+  async recordB() {
     return this.scrapingService.scrapPlayersRecords()
+  }
+
+  @Get('recordP/:year')
+  async recordP(@Param('year') year: string) {
+    return this.scrapingService.scrapPitcherRecordsThisYear(year)
   }
   
 }

@@ -5,6 +5,7 @@ import { ScrapModule } from './scrap/scrap.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PLAYER_INFO } from './scrap/entity/playerInfo.entity';
 import { YEAR_RECORD_BATTER } from './scrap/entity/yearRecordBatter.entity';
+import { YEAR_RECORD_PITCHER } from './scrap/entity/yearRecordPitcher.entity';
 
 
 @Module({
@@ -16,7 +17,7 @@ import { YEAR_RECORD_BATTER } from './scrap/entity/yearRecordBatter.entity';
       username: 'admin',
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
-      entities: [PLAYER_INFO, YEAR_RECORD_BATTER], 
+      entities: [PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER], 
       synchronize: true 
     }), 
     ScrapModule
