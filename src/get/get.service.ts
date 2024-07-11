@@ -46,7 +46,7 @@ export class GetService {
                 'p.L', 'p.S', 'p.HD', 'p.IP', 'p.ER',
                 'p.R', 'p.rRA', 'p.TBF', 'p.H', 'p.2B',
                 'p.3B', 'p.HR', 'p.BB', 'p.HP', 'p.IB',
-                'p.SO', 'p.ROE', 'p.BK', 'p.WP', 'p.RA9',
+                'p.SO', 'p.ROE', 'p.BK', 'p.WP', 'p.RA9',  
                 'p.rRA9', 'p.rRA9pf', 'p.FIP'
             ])
             .where('p.name LIKE :searchTerm', { searchTerm: `%${name}%` })
