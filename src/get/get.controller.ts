@@ -11,8 +11,8 @@ export class GetController {
         return this.getService.searchPlayer(name)
     }
 
-    @Get('detail/:id')
-    async playerDetail(@Param('id') id: number) {
+    @Get('detail')
+    async playerDetail(@Query('id') id: number) {
         return this.getService.searchPlayerById(id)
     }
 

@@ -114,7 +114,6 @@ export class GetService {
             ])
             .where('pi.id = :id', {id : id})
             .getOne();
-        console.log(batter, pitcher)
 
         if (pitcher.yrps.length < 1) {
             batter['records'] = batter.yrbs
