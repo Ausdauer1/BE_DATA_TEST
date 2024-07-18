@@ -56,4 +56,11 @@ export class PLAYER_INFO {
     @OneToMany(() => YEAR_RECORD_PITCHER, yrp => yrp.pi)
     yrps: YEAR_RECORD_PITCHER[];
 
+    @OneToMany(() => YEAR_RECORD_BATTER, trb => trb.pi)
+    trbs: YEAR_RECORD_BATTER[];
+
+    @OneToMany(() => YEAR_RECORD_BATTER, trp => trp.pi)
+    trps: YEAR_RECORD_BATTER[];
+    
+
 }
