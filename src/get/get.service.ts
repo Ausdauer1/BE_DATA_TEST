@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PLAYER_INFO } from 'src/scrap/entity/playerInfo.entity';
-import { YEAR_RECORD_BATTER } from 'src/scrap/entity/yearRecordBatter.entity';
-import { YEAR_RECORD_PITCHER } from 'src/scrap/entity/yearRecordPitcher.entity';
+import { PLAYER_INFO } from 'src/entity/playerInfo.entity';
+import { YEAR_RECORD_BATTER } from 'src/entity/yearRecordBatter.entity';
+import { YEAR_RECORD_PITCHER } from 'src/entity/yearRecordPitcher.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()

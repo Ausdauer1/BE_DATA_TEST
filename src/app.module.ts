@@ -3,9 +3,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScrapModule } from './scrap/scrap.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PLAYER_INFO } from './scrap/entity/playerInfo.entity';
-import { YEAR_RECORD_BATTER } from './scrap/entity/yearRecordBatter.entity';
-import { YEAR_RECORD_PITCHER } from './scrap/entity/yearRecordPitcher.entity';
+import { PLAYER_INFO } from './entity/playerInfo.entity';
+import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
+import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
 import { GetModule } from './get/get.module';
 
 

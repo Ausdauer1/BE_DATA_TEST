@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import * as puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PLAYER_INFO } from './entity/playerInfo.entity';
-import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
-import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
+import { PLAYER_INFO } from '../entity/playerInfo.entity';
+import { YEAR_RECORD_BATTER } from '../entity/yearRecordBatter.entity';
+import { YEAR_RECORD_PITCHER } from '../entity/yearRecordPitcher.entity';
 import { IsNull, Not, Repository } from 'typeorm';
 import { table } from 'console';
 

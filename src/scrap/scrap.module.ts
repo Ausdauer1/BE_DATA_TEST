@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ScrapService } from './scrap.service';
 import { ScrapController } from './scrap.controller';
-import { PLAYER_INFO } from './entity/playerInfo.entity'
+import { PLAYER_INFO } from '../entity/playerInfo.entity'
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
-import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
+import { YEAR_RECORD_BATTER } from '../entity/yearRecordBatter.entity';
+import { YEAR_RECORD_PITCHER } from '../entity/yearRecordPitcher.entity';
 
 
 @Module({
