@@ -1,6 +1,8 @@
 import { Column, Entity, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { YEAR_RECORD_BATTER } from "./yearRecordBatter.entity";
 import { YEAR_RECORD_PITCHER } from "./yearRecordPitcher.entity";
+import { TOTAL_RECORD_BATTER } from "./totalRecordBatter.entity";
+import { TOTAL_RECORD_PITCHER } from "./totalRecordPitcher.entity";
 
 @Entity()
 export class PLAYER_INFO {
@@ -56,11 +58,11 @@ export class PLAYER_INFO {
     @OneToMany(() => YEAR_RECORD_PITCHER, yrp => yrp.pi)
     yrps: YEAR_RECORD_PITCHER[];
 
-    @OneToMany(() => YEAR_RECORD_BATTER, trb => trb.pi)
-    trbs: YEAR_RECORD_BATTER[];
+    @OneToMany(() => TOTAL_RECORD_BATTER, trb => trb.pi)
+    trbs: TOTAL_RECORD_BATTER[];
 
-    @OneToMany(() => YEAR_RECORD_BATTER, trp => trp.pi)
-    trps: YEAR_RECORD_BATTER[];
+    @OneToMany(() => TOTAL_RECORD_PITCHER, trp => trp.pi)
+    trps: TOTAL_RECORD_PITCHER[];
     
 
 }

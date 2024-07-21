@@ -22,15 +22,22 @@ export class GetService {
     async searchPlayer(name: string) {
         const batter = await this.playerInfoRepository.createQueryBuilder('pi')
             .leftJoinAndSelect('pi.yrbs', 'b')
+            .leftJoinAndSelect('pi.trbs', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
                 'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career',
-                'b.year', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
+                'b.year', 'b.team', 'b.age', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
                 'b.PA', 'b.ePA', 'b.AB', 'b.R', 'b.H',
                 'b.2B', 'b.3B', 'b.HR', 'b.TB', 'b.RBI',
                 'b.SB', 'b.CS', 'b.BB', 'b.HP', 'b.IB',
                 'b.SO', 'b.GDP', 'b.SH', 'b.SF', 'b.OBP',
-                'b.SLG', 'b.OPS', 'b.WRC'
+                'b.SLG', 'b.OPS', 'b.WRC', 
+                't.year', 't.team', 't.age', 't.WAR', 't.oWAR', 't.dWAR', 't.AVG', 't.G',
+                't.PA', 't.ePA', 't.AB', 't.R', 't.H',
+                't.2B', 't.3B', 't.HR', 't.TB', 't.RBI',
+                't.SB', 't.CS', 't.BB', 't.HP', 't.IB',
+                't.SO', 't.GDP', 't.SH', 't.SF', 't.OBP',
+                't.SLG', 't.OPS', 't.WRC'
             ])
             .where('b.name LIKE :searchTerm', { searchTerm: `%${name}%` })
             .getMany();
@@ -53,10 +60,15 @@ export class GetService {
             .getMany();
         
         const batterArr = batter.map(el => {
+            el.yrbs.map((e)=>{
+                if (e.age === "") e.age = String(2024 - Number(el.birth_date.slice(0,4)))
+                if (e.team === "") e.team = el.team
+            })
             return {
                 ...el,
                 position: el.detail_position,
-                records: el.yrbs,
+                records: [...el.trbs, ...el.yrbs],
+                trbs: undefined,
                 yrbs: undefined,
                 detail_position: undefined
             }
@@ -85,15 +97,22 @@ export class GetService {
         console.log(id)
         const batter = await this.playerInfoRepository.createQueryBuilder('pi')
             .leftJoinAndSelect('pi.yrbs', 'b')
+            .leftJoinAndSelect('pi.trbs', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.id',
-                'b.year', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career',
+                'b.year', 'b.team', 'b.age', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
                 'b.PA', 'b.ePA', 'b.AB', 'b.R', 'b.H',
                 'b.2B', 'b.3B', 'b.HR', 'b.TB', 'b.RBI',
                 'b.SB', 'b.CS', 'b.BB', 'b.HP', 'b.IB',
                 'b.SO', 'b.GDP', 'b.SH', 'b.SF', 'b.OBP',
-                'b.SLG', 'b.OPS', 'b.WRC'
+                'b.SLG', 'b.OPS', 'b.WRC', 
+                't.year', 't.team', 't.age', 't.WAR', 't.oWAR', 't.dWAR', 't.AVG', 't.G',
+                't.PA', 't.ePA', 't.AB', 't.R', 't.H',
+                't.2B', 't.3B', 't.HR', 't.TB', 't.RBI',
+                't.SB', 't.CS', 't.BB', 't.HP', 't.IB',
+                't.SO', 't.GDP', 't.SH', 't.SF', 't.OBP',
+                't.SLG', 't.OPS', 't.WRC'
             ])
             .where('pi.id = :id', { id: id })
             .getOne();
@@ -116,10 +135,15 @@ export class GetService {
             .getOne();
 
         if (pitcher.yrps.length < 1) {
-            batter['records'] = batter.yrbs
+            batter.yrbs.map(el => {
+                if (el.age === "") el.age = String(2024 - Number(batter.birth_date.slice(0,4)))
+                if (el.team === "") el.team = batter.team
+            })
+            batter['records'] = [...batter.trbs, ...batter.yrbs]
             batter['position'] = batter.detail_position
             batter.detail_position = undefined
             batter.yrbs = undefined
+            batter.trbs = undefined
             return batter
         } else {
             pitcher['records'] = pitcher.yrps

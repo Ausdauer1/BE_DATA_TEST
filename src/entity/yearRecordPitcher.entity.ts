@@ -23,6 +23,12 @@ export class YEAR_RECORD_PITCHER {
     @Column("varchar", {length : 5})
     name: string;
 
+    @Column("varchar", {length : 5})
+    team: string;
+
+    @Column('char', {length : 3})
+    age: string;
+
     @Column("decimal", {precision: 6, scale: 3})
     WAR: number;
 

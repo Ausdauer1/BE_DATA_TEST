@@ -20,10 +20,13 @@ export class TOTAL_RECORD_PITCHER {
     @Column("varchar", {length : 5})
     name: string;
 
-    @Column('int')
+    @Column("varchar", {length : 5})
+    team: string;
+
+    @Column('char', {length : 3})
     age: number;
 
-    @Column("char", {length: 5})
+    @Column("char", {length: 5, nullable: true})
     kbo_id_pitcher: string;
 
     @Column("char", {length: 5})
@@ -122,7 +125,7 @@ export class TOTAL_RECORD_PITCHER {
     @Column("decimal", {precision: 5, scale: 2})
     rRA9: number;
     // 파크팩터를 적용한 9이닝당 실점
-    @Column("decimal", {precision: 5, scale: 2})
+    @Column("decimal", {precision: 5, scale: 2, nullable: true})
     rRA9pf: number;
     //수비무관 평균자책점
     @Column("decimal", {precision: 5, scale: 2})

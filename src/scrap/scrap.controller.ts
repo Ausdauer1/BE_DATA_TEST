@@ -27,13 +27,24 @@ export class ScrapController {
     return this.scrapingService.scrapPitcherRecordsThisYear(year)
   }
 
-  @Get('record/years')
+  @Get('record/Batter')
   async recordYears() {
     return this.scrapTotalRecentService.scrapTotalRecords()
+  }
+
+  @Get('record/pitcher')
+  async recordYears2() {
+    return this.scrapTotalRecentService.scrapTotalRecords2()
   }
   
   @Get('career')
   async careerRecords() {
     return this.scrapTotalRecentService.careerRecord()
   }
+
+  @Get('career2') 
+  async careerRecords2() {
+    return this.scrapTotalRecentService.careerRecord2()
+  }
+
 }
