@@ -1,9 +1,14 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ScrapService } from './scrap.service';
+import { ScrapTotalRecentService } from './scrapTotalRecent.service';
+import { get } from 'http';
 
 @Controller('scraping')
 export class ScrapController {
-  constructor(private readonly scrapingService: ScrapService) {}
+  constructor(
+    private readonly scrapingService: ScrapService,
+    private readonly scrapTotalRecentService: ScrapTotalRecentService,
+  ) {}
 
   // /scraping/players 엔드포인트에서 GET 요청을 처리합니다.
   @Get('players')
@@ -20,6 +25,11 @@ export class ScrapController {
   @Get('recordP/:year')
   async recordP(@Param('year') year: string) {
     return this.scrapingService.scrapPitcherRecordsThisYear(year)
+  }
+
+  @Get('record/years')
+  async recordYears() {
+    return this.scrapTotalRecentService.scrapTotalRecords()
   }
   
 }

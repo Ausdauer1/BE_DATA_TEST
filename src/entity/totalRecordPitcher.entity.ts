@@ -14,11 +14,14 @@ export class TOTAL_RECORD_PITCHER {
     @JoinColumn({ name: "Pid", referencedColumnName: "id"})
     pi: PLAYER_INFO; 
 
-    @Column("char", {length: 4, default: "2024"})
+    @Column("char", {length: 4})
     year: string;
 
     @Column("varchar", {length : 5})
     name: string;
+
+    @Column('int')
+    age: number;
 
     @Column("char", {length: 5})
     kbo_id_pitcher: string;
@@ -26,7 +29,7 @@ export class TOTAL_RECORD_PITCHER {
     @Column("char", {length: 5})
     statiz_id_pitcher: string;
 
-    @Column("decimal", {precision: 5, scale: 2})
+    @Column("decimal", {precision: 6, scale: 3})
     WAR: number;
 
     @Column("decimal", {precision: 5, scale: 2})

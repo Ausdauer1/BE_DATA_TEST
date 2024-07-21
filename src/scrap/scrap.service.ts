@@ -143,17 +143,23 @@ export class ScrapService {
     // return players;
   }
   async scrapPlayersRecords() {
-    const browser = await puppeteer.launch({headless: false});
+    const browser = await puppeteer.launch({headless: false, protocolTimeout: 900000});
     const page = await browser.newPage();
-    await page.goto("https://statiz.sporki.com/player/", { waitUntil: 'domcontentloaded', timeout: 10000 });
+    await page.goto("https://statiz.sporki.com/player/", { waitUntil: 'domcontentloaded' });
 
     const players = await this.playerInfoRepository.createQueryBuilder('playerInfo')
-      .select(['playerInfo.kbo_id', 'playerInfo.name', 'playerInfo.team', 'playerInfo.birth_date'])
-      .where('playerInfo.kbo_id IS NOT NULL')
-      .andWhere('playerInfo.position = "B"')
+      .select(['playerInfo.kbo_id', 'playerInfo.name', 'playerInfo.team', 'playerInfo.birth_date', 'playerInfo.id', 'playerInfo.detail_position'])
+      // .where('playerInfo.kbo_id IS NOT NULL')
+      //.andWhere('playerInfo.position = "B"')
+      .where('playerInfo.team IN (:...teams)', { teams: ['KIA', 'LG', '두산', '삼성']})
+      // .andWhere('playerInfo.position = "P"')
+      // .where('playerInfo.name = "임서준"')
       .getMany();                 
       
+    // console.log(players)
     for (let player of players) {
+      let kbo_position = player.detail_position
+      // console.log(kbo_position)
       await page.click('.new_searchPlayer')
       await page.waitForSelector('input[name=s]')
       await page.$eval('input[name=s]', (el, value) => {
@@ -179,46 +185,63 @@ export class ScrapService {
               let content = await page.content();
               let $ = cheerio.load(content);
               
-              if (($('.table_type03 table tbody tr:nth-child(1) td:nth-child(2)').text().substring(0,4)) === "2024") {
-                console.log("여기옴")
+              // if (($('.table_type03 table tbody tr:nth-child(1) td:nth-child(2)').text().substring(0,4)) === "2024") {
+                // console.log("여기옴")
                 const pageUrl = page.url()
-                const record = new YEAR_RECORD_BATTER();
+                //const record = new YEAR_RECORD_BATTER();
 
-                record.name = player.name
-                record.kbo_id_batter = player.kbo_id
-                record.statiz_id_batter = pageUrl.substring(pageUrl.indexOf("p_no=") + 5)
-                record.oWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(6)').text())
-                record.dWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(7)').text())
-                record.G = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(8)').text())
-                record.PA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(9)').text())
-                record.ePA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(10)').text())
-                record.AB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(11)').text())
-                record.R = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(12)').text())
-                record.H = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(13)').text())
-                record['2B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(14)').text())
-                record['3B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(15)').text())
-                record.HR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(16)').text())
-                record.TB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(17)').text())
-                record.RBI = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(18)').text())
-                record.SB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(19)').text())
-                record.CS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(20)').text())
-                record.BB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(21)').text())
-                record.HP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(22)').text())
-                record.IB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(23)').text())
-                record.SO = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(24)').text())
-                record.GDP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(25)').text())
-                record.SH = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(26)').text())
-                record.SF = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(27)').text())
-                record.AVG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(28)').text())
-                record.OBP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(29)').text())
-                record.SLG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(30)').text())
-                record.OPS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(31)').text())
-                record.WRC = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(33)').text())
-                record.WAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(34)').text())
-
-                console.log(record.name)
-                await this.yearRecordBatterRepository.save(record)
-              }
+                // record.name = player.name
+                // record.kbo_id_batter = player.kbo_id
+                const statiz_id_batter = pageUrl.substring(pageUrl.indexOf("p_no=") + 5)
+                // record.oWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(6)').text())
+                // record.dWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(7)').text())
+                // record.G = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(8)').text())
+                // record.PA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(9)').text())
+                // record.ePA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(10)').text())
+                // record.AB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(11)').text())
+                // record.R = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(12)').text())
+                // record.H = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(13)').text())
+                // record['2B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(14)').text())
+                // record['3B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(15)').text())
+                // record.HR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(16)').text())
+                // record.TB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(17)').text())
+                // record.RBI = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(18)').text())
+                // record.SB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(19)').text())
+                // record.CS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(20)').text())
+                // record.BB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(21)').text())
+                // record.HP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(22)').text())
+                // record.IB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(23)').text())
+                // record.SO = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(24)').text())
+                // record.GDP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(25)').text())
+                // record.SH = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(26)').text())
+                // record.SF = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(27)').text())
+                // record.AVG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(28)').text())
+                // record.OBP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(29)').text())
+                // record.SLG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(30)').text())
+                // record.OPS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(31)').text())
+                // record.WRC = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(33)').text())
+                // record.WAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(34)').text())
+                const birth = $('.man_info li:nth-child(1)').text()
+                const regex = /[^0-9]/g;
+                const birthNum = birth.replace(regex, "")
+                let birthDate = birthNum.slice(0,4) + '-' + birthNum.slice(4,6) + '-' + birthNum.slice(6,8)
+                console.log(birthDate, player.birth_date)
+                if(birthDate !== player.birth_date) {
+                  // console.log(player.name)
+                  // let statiz_position = $('.con span:nth-child(2)').text().trim()
+                  // if (statiz_position === 'P' || statiz_position === 'C'){
+                  //   await this.playerInfoRepository.update(player.id, {
+                  //     statiz_id: statiz_id_batter,
+                  //   })
+                  // } else {
+                    await this.playerInfoRepository.update(player.id, {
+                      statiz_id: null,
+                      
+                    })
+                  // }
+                }
+                
+              // }
 
               break;
             }
@@ -226,45 +249,66 @@ export class ScrapService {
           
           
         } else {
-          if (($('.table_type03 table tbody tr:nth-child(1) td:nth-child(2)').text().substring(0,4)) === "2024") {
+          // if (($('.table_type03 table tbody tr:nth-child(1) td:nth-child(2)').text().substring(0,4)) === "2024") {
             const pageUrl = page.url()
             console.log('노중복')
-            const record = new YEAR_RECORD_BATTER();
-            record.name = player.name
-            record.kbo_id_batter = player.kbo_id
-            record.statiz_id_batter = pageUrl.substring(pageUrl.indexOf("p_no=") + 5)
-            record.oWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(6)').text())
-            record.dWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(7)').text())
-            record.G = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(8)').text())
-            record.PA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(9)').text())
-            record.ePA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(10)').text())
-            record.AB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(11)').text())
-            record.R = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(12)').text())
-            record.H = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(13)').text())
-            record['2B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(14)').text())
-            record['3B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(15)').text())
-            record.HR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(16)').text())
-            record.TB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(17)').text())
-            record.RBI = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(18)').text())
-            record.SB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(19)').text())
-            record.CS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(20)').text())
-            record.BB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(21)').text())
-            record.HP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(22)').text())
-            record.IB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(23)').text())
-            record.SO = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(24)').text())
-            record.GDP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(25)').text())
-            record.SH = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(26)').text())
-            record.SF = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(27)').text())
-            record.AVG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(28)').text())
-            record.OBP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(29)').text())
-            record.SLG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(30)').text())
-            record.OPS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(31)').text())
-            record.WRC = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(33)').text())
-            record.WAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(34)').text())
+            //const record = new YEAR_RECORD_BATTER();
+            //record.name = player.name
+            // record.kbo_id_batter = player.kbo_id
+            const statiz_id_batter = pageUrl.substring(pageUrl.indexOf("p_no=") + 5)
+            // record.oWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(6)').text())
+            // record.dWAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(7)').text())
+            // record.G = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(8)').text())
+            // record.PA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(9)').text())
+            // record.ePA = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(10)').text())
+            // record.AB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(11)').text())
+            // record.R = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(12)').text())
+            // record.H = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(13)').text())
+            // record['2B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(14)').text())
+            // record['3B'] = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(15)').text())
+            // record.HR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(16)').text())
+            // record.TB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(17)').text())
+            // record.RBI = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(18)').text())
+            // record.SB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(19)').text())
+            // record.CS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(20)').text())
+            // record.BB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(21)').text())
+            // record.HP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(22)').text())
+            // record.IB = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(23)').text())
+            // record.SO = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(24)').text())
+            // record.GDP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(25)').text())
+            // record.SH = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(26)').text())
+            // record.SF = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(27)').text())
+            // record.AVG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(28)').text())
+            // record.OBP = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(29)').text())
+            // record.SLG = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(30)').text())
+            // record.OPS = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(31)').text())
+            // record.WRC = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(33)').text())
+            // record.WAR = Number($('.table_type03 table tbody tr:nth-child(1) td:nth-child(34)').text())
 
-            console.log(record.name)
-            await this.yearRecordBatterRepository.save(record)
-          }
+            // console.log(record.name)
+            
+            const birth = $('.man_info li:nth-child(1)').text()
+            const regex = /[^0-9]/g;
+            const birthNum = birth.replace(regex, "")
+            let birthDate = birthNum.slice(0,4) + '-' + birthNum.slice(4,6) + '-' + birthNum.slice(6,8)
+            console.log(birthDate, player.birth_date)
+            if(birthDate !== player.birth_date) {
+              // console.log(player.name)
+              // let statiz_position = $('.con span:nth-child(2)').text().trim()
+              // if (statiz_position === 'P' || statiz_position === 'C'){
+              //   await this.playerInfoRepository.update(player.id, {
+              //     statiz_id: statiz_id_batter,
+              //   })
+              // } else {
+                await this.playerInfoRepository.update(player.id, {
+                  statiz_id: null,
+                  // detail_position: `${kbo_position}(${statiz_position})`
+                })
+              // }
+
+            }
+            
+          // }
         }
         function matchData() {
             
