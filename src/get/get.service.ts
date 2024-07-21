@@ -45,16 +45,24 @@ export class GetService {
         console.log(batter)
         const pitcher = await this.playerInfoRepository.createQueryBuilder('pi')
             .leftJoinAndSelect('pi.yrps', 'p')
+            .leftJoinAndSelect('pi.trps', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
                 'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career',
-                'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
+                'p.year', 'p.team', 'p.age', 'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
                 'p.GR', 'p.GF', 'p.CG', 'p.SHO', 'p.W',
                 'p.L', 'p.S', 'p.HD', 'p.IP', 'p.ER',
                 'p.R', 'p.rRA', 'p.TBF', 'p.H', 'p.2B',
                 'p.3B', 'p.HR', 'p.BB', 'p.HP', 'p.IB',
                 'p.SO', 'p.ROE', 'p.BK', 'p.WP', 'p.RA9',  
-                'p.rRA9', 'p.rRA9pf', 'p.FIP'
+                'p.rRA9', 'p.rRA9pf', 'p.FIP',
+                't.year', 't.team', 't.age', 't.WAR', 't.ERA', 't.WHIP', 't.G', 't.GS',
+                't.GR', 't.GF', 't.CG', 't.SHO', 't.W',
+                't.L', 't.S', 't.HD', 't.IP', 't.ER',
+                't.R', 't.rRA', 't.TBF', 't.H', 't.2B',
+                't.3B', 't.HR', 't.BB', 't.HP', 't.IB',
+                't.SO', 't.ROE', 't.BK', 't.WP', 't.RA9',  
+                't.rRA9', 't.rRA9pf', 't.FIP'
             ])
             .where('p.name LIKE :searchTerm', { searchTerm: `%${name}%` })
             .getMany();
@@ -74,10 +82,15 @@ export class GetService {
             }
         })
         const pitcherArr = pitcher.map(el => {
+            el.yrps.map((e)=>{
+                if (e.age === "") e.age = String(2024 - Number(el.birth_date.slice(0,4)))
+                if (e.team === "") e.team = el.team
+            })
             return {
                 ...el,
                 position: el.detail_position,
-                records: el.yrps,
+                records: [...el.trps,...el.yrps],
+                trps: undefined,
                 yrps: undefined,
                 detail_position: undefined
             }
@@ -120,16 +133,24 @@ export class GetService {
         
         const pitcher = await this.playerInfoRepository.createQueryBuilder('pi')
             .leftJoinAndSelect('pi.yrps', 'p')
+            .leftJoinAndSelect('pi.trps', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
                 'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.id',
-                'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
+                'p.year', 'p.team', 'p.age', 'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
                 'p.GR', 'p.GF', 'p.CG', 'p.SHO', 'p.W',
                 'p.L', 'p.S', 'p.HD', 'p.IP', 'p.ER',
                 'p.R', 'p.rRA', 'p.TBF', 'p.H', 'p.2B',
                 'p.3B', 'p.HR', 'p.BB', 'p.HP', 'p.IB',
                 'p.SO', 'p.ROE', 'p.BK', 'p.WP', 'p.RA9',  
-                'p.rRA9', 'p.rRA9pf', 'p.FIP'
+                'p.rRA9', 'p.rRA9pf', 'p.FIP',
+                't.year', 't.team', 't.age', 't.WAR', 't.ERA', 't.WHIP', 't.G', 't.GS',
+                't.GR', 't.GF', 't.CG', 't.SHO', 't.W',
+                't.L', 't.S', 't.HD', 't.IP', 't.ER',
+                't.R', 't.rRA', 't.TBF', 't.H', 't.2B',
+                't.3B', 't.HR', 't.BB', 't.HP', 't.IB',
+                't.SO', 't.ROE', 't.BK', 't.WP', 't.RA9',  
+                't.rRA9', 't.rRA9pf', 't.FIP'
             ])
             .where('pi.id = :id', {id : id})
             .getOne();
@@ -146,10 +167,15 @@ export class GetService {
             batter.trbs = undefined
             return batter
         } else {
-            pitcher['records'] = pitcher.yrps
+            pitcher.yrps.map(el => {
+                if (el.age === "") el.age = String(2024 - Number(batter.birth_date.slice(0,4)))
+                if (el.team === "") el.team = pitcher.team
+            })
+            pitcher['records'] = [...pitcher.trps, ...pitcher.yrps]
             pitcher['position'] = pitcher.detail_position
             pitcher.detail_position = undefined
             pitcher.yrps = undefined
+            batter.trps = undefined
             return pitcher
         }
         // const batterArr = batter.map(el => {
