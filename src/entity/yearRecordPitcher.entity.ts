@@ -7,6 +7,9 @@ export class YEAR_RECORD_PITCHER {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column("int")
+    Pid: number;
+
     @Column("char", {length: 5})
     kbo_id_pitcher: string;
 
@@ -122,7 +125,7 @@ export class YEAR_RECORD_PITCHER {
     @Column("decimal", {precision: 5, scale: 2})
     rRA9: number;
     // 파크팩터를 적용한 9이닝당 실점
-    @Column("decimal", {precision: 5, scale: 2})
+    @Column("decimal", {precision: 5, scale: 2, nullable: true})
     rRA9pf: number;
     //수비무관 평균자책점
     @Column("decimal", {precision: 5, scale: 2})

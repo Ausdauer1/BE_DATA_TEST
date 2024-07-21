@@ -7,6 +7,7 @@ import { TOTAL_RECORD_BATTER } from 'src/entity/totalRecordBatter.entity';
 import { TOTAL_RECORD_PITCHER } from 'src/entity/totalRecordPitcher.entity';
 import { IsNull, Not, Repository } from 'typeorm';
 import { YEAR_RECORD_BATTER } from 'src/entity/yearRecordBatter.entity';
+import { YEAR_RECORD_PITCHER } from 'src/entity/yearRecordPitcher.entity';
 
 @Injectable()
 export class ScrapTotalRecentService {
@@ -16,6 +17,9 @@ export class ScrapTotalRecentService {
 
     @InjectRepository(YEAR_RECORD_BATTER)
     private yearRecordBatterRepository: Repository<YEAR_RECORD_BATTER>,
+
+    @InjectRepository(YEAR_RECORD_PITCHER)
+    private yearRecordPitcherRepository: Repository<YEAR_RECORD_PITCHER>,
 
     @InjectRepository(TOTAL_RECORD_BATTER)
     private totalRecordBatterRepository: Repository<TOTAL_RECORD_BATTER>,
@@ -266,13 +270,55 @@ export class ScrapTotalRecentService {
       const i = $('.table_type02 table tbody:nth-child(4) tr').length
       const j = 1
         
-      const record = new YEAR_RECORD_BATTER();
+      const record = new YEAR_RECORD_PITCHER();
       
+      record.Pid = player.id
       record.name = player.name
-      record.kbo_id_batter = player.kbo_id
-      record.statiz_id_batter = player.statiz_id
+      record.kbo_id_pitcher = player.kbo_id
+      record.statiz_id_pitcher = player.statiz_id
       record.age = '-'
       record.team = '통산'
+      record.year = $(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j})`).text().trim()
+      record.G = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+3})`).text());
+      record.GS = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+4})`).text());
+      record.GR = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+5})`).text());
+      record.GF = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+6})`).text());
+      record.CG = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+7})`).text());
+      record.SHO = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+8})`).text());
+      record.W = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+9})`).text());
+      record.L = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+10})`).text());
+      record.S = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+11})`).text());
+      // body > div.warp > div.container > section > div.table_type02.transverse_scroll.cbox > table > tbody:nth-child(2) > tr:nth-child(1) > td:nth-child(14)
+      record.HD = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+12})`).text());
+      record.IP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+13})`).text());
+      record.ER = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+14})`).text());
+      record.R = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+15})`).text());
+      record.rRA = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+16})`).text());
+      record.TBF = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+17})`).text());
+      record.H = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+18})`).text());
+      record['2B'] = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+19})`).text());
+      record['3B'] = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+20})`).text());
+      record.HR = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+21})`).text());
+      record.BB = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+22})`).text());
+      record.HP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+23})`).text());
+      record.IB = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+24})`).text());
+      record.SO = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+25})`).text());
+      record.ROE = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+26})`).text());
+      record.BK = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+27})`).text());
+      record.WP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+28})`).text());
+      record.ERA = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+29})`).text());
+      record.RA9 = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+30})`).text());
+      record.rRA9 = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+31})`).text());
+      record.FIP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+32})`).text());
+      record.WHIP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+33})`).text());
+      record.WAR = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+34})`).text());
+
+      console.log(record.name, record.year)
+      if (record.year === "") {
+        console.log('통과')
+        continue;
+      }
+      await this.yearRecordPitcherRepository.save(record)
     }
   }
 }
