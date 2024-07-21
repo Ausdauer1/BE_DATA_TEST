@@ -17,13 +17,13 @@ export class YEAR_RECORD_PITCHER {
     @Column("char", {length: 5})
     statiz_id_pitcher: string;
 
-    @Column("char", {length: 4, default: "2024"})
+    @Column("char", {length: 5, default: "2024"})
     year: string;
 
     @Column("varchar", {length : 5})
     name: string;
 
-    @Column("decimal", {precision: 5, scale: 2})
+    @Column("decimal", {precision: 6, scale: 3})
     WAR: number;
 
     @Column("decimal", {precision: 5, scale: 2})

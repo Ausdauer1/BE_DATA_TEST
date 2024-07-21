@@ -102,22 +102,67 @@ export class ScrapTotalRecentService {
     const players: PLAYER_INFO[] = await this.playerInfoRepository.createQueryBuilder('playerInfo')
       .select(['playerInfo.kbo_id', 'playerInfo.name', 'playerInfo.team', 'playerInfo.birth_date', 'playerInfo.statiz_id', 'playerInfo.id'])
       .where('playerInfo.statiz_id IS NOT NULL')
+      .andWhere('playerInfo.kbo_id IS NOT NULL')
       .andWhere('playerInfo.position = "B"')
-      // .andWhere('playerInfo.name ="김태군"')
       .getMany();
 
     const browser = await puppeteer.launch({headless: false, protocolTimeout: 900000});
     const page = await browser.newPage();
     
     for (let player of players) {
-      
-      await page.goto(`https://statiz.sporki.com/player/?m=year&p_no=${player.statiz_id}`, { waitUntil: 'domcontentloaded', timeout: 10000 });
+
+      await page.goto(`https://statiz.sporki.com/player/?m=year&p_no=${player.statiz_id}`, { waitUntil: 'domcontentloaded', timeout: 3000 });
       await page.waitForSelector('table')
       
       let content = await page.content();
       let $ = cheerio.load(content);
+      const i = $('.table_type02 table tbody:nth-child(4) tr').length
+      const j = 1
+        
+      const record = new YEAR_RECORD_BATTER();
+      
+      record.name = player.name
+      record.kbo_id_batter = player.kbo_id
+      record.statiz_id_batter = player.statiz_id
+      record.age = '-'
+      record.team = '통산'
+      record.year = $(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j})`).text().trim()
+      record.oWAR = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+3})`).text())
+      record.dWAR = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+4})`).text())
+      record.G = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+5})`).text())
+      record.PA = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+6})`).text())
+      record.ePA = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+7})`).text())
+      record.AB = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+8})`).text())
+      record.R = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+9})`).text())
+      record.H = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+10})`).text())
+      record['2B'] = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+11})`).text())
+      record['3B'] = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+12})`).text())
+      record.HR = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+13})`).text())
+      record.TB = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+14})`).text())
+      record.RBI = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+15})`).text())
+      record.SB = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+16})`).text())
+      record.CS = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+17})`).text())
+      record.BB = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+18})`).text())
+      record.HP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+19})`).text())
+      record.IB = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+20})`).text())
+      record.SO = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+21})`).text())
+      record.GDP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+22})`).text())
+      record.SH = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+23})`).text())
+      record.SF = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+24})`).text())
+      record.AVG = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+25})`).text())
+      record.OBP = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+26})`).text())
+      record.SLG = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+27})`).text())
+      record.OPS = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+28})`).text())
+      record.WRC = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+30})`).text())
+      record.WAR = Number($(`.table_type02 table tbody:nth-child(4) tr:nth-child(${i}) td:nth-child(${j+31})`).text())
 
-
+      console.log(record.name, record.year)
+      if (record.year === "") {
+        console.log('통과')
+        continue;
+      }
+      await this.yearRecordBatterRepository.save(record)
+              
     }
   }
 }

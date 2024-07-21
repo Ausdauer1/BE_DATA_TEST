@@ -23,7 +23,7 @@ export class TOTAL_RECORD_BATTER {
     @Column("varchar", {length : 5})
     team: string;
 
-    @Column('int')
+    @Column('char', {length : 3})
     age: number;
 
     @Column("char", {length: 5, nullable: true})

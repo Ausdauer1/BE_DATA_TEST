@@ -32,4 +32,8 @@ export class ScrapController {
     return this.scrapTotalRecentService.scrapTotalRecords()
   }
   
+  @Get('career')
+  async careerRecords() {
+    return this.scrapTotalRecentService.careerRecord()
+  }
 }
