@@ -24,8 +24,8 @@ export class GetService {
             .leftJoinAndSelect('pi.yrbs', 'b')
             .leftJoinAndSelect('pi.trbs', 't')
             .select([
-                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career',
+                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
                 'b.year', 'b.team', 'b.age', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
                 'b.PA', 'b.ePA', 'b.AB', 'b.R', 'b.H',
                 'b.2B', 'b.3B', 'b.HR', 'b.TB', 'b.RBI',
@@ -47,8 +47,8 @@ export class GetService {
             .leftJoinAndSelect('pi.yrps', 'p')
             .leftJoinAndSelect('pi.trps', 't')
             .select([
-                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career',
+                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
                 'p.year', 'p.team', 'p.age', 'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
                 'p.GR', 'p.GF', 'p.CG', 'p.SHO', 'p.W',
                 'p.L', 'p.S', 'p.HD', 'p.IP', 'p.ER',
@@ -68,13 +68,17 @@ export class GetService {
             .getMany();
         
         const batterArr = batter.map(el => {
+            const thisYear = []
             el.yrbs.map((e)=>{
                 if (e.age === "") e.age = String(2024 - Number(el.birth_date.slice(0,4)))
                 if (e.team === "") e.team = el.team
+                if (e.year === "2024") thisYear.push(e)
             })
             return {
                 ...el,
+                group: el.position,
                 position: el.detail_position,
+                season: thisYear,
                 records: [...el.trbs, ...el.yrbs],
                 trbs: undefined,
                 yrbs: undefined,
@@ -82,13 +86,17 @@ export class GetService {
             }
         })
         const pitcherArr = pitcher.map(el => {
+            const thisYear = []
             el.yrps.map((e)=>{
                 if (e.age === "") e.age = String(2024 - Number(el.birth_date.slice(0,4)))
                 if (e.team === "") e.team = el.team
+                if (e.year === "2024") thisYear.push(e)
             })
             return {
                 ...el,
+                group: el.position,
                 position: el.detail_position,
+                season: thisYear,
                 records: [...el.trps,...el.yrps],
                 trps: undefined,
                 yrps: undefined,
@@ -112,8 +120,8 @@ export class GetService {
             .leftJoinAndSelect('pi.yrbs', 'b')
             .leftJoinAndSelect('pi.trbs', 't')
             .select([
-                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career',
+                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
                 'b.year', 'b.team', 'b.age', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
                 'b.PA', 'b.ePA', 'b.AB', 'b.R', 'b.H',
                 'b.2B', 'b.3B', 'b.HR', 'b.TB', 'b.RBI',
@@ -135,8 +143,8 @@ export class GetService {
             .leftJoinAndSelect('pi.yrps', 'p')
             .leftJoinAndSelect('pi.trps', 't')
             .select([
-                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.id',
+                'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
                 'p.year', 'p.team', 'p.age', 'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
                 'p.GR', 'p.GF', 'p.CG', 'p.SHO', 'p.W',
                 'p.L', 'p.S', 'p.HD', 'p.IP', 'p.ER',
@@ -156,26 +164,35 @@ export class GetService {
             .getOne();
 
         if (pitcher.yrps.length < 1) {
+            const thisYear = []
             batter.yrbs.map(el => {
                 if (el.age === "") el.age = String(2024 - Number(batter.birth_date.slice(0,4)))
                 if (el.team === "") el.team = batter.team
+                if (el.year === "2024") thisYear.push(el)
             })
+            batter['group'] = batter.position
+            batter['season'] = thisYear
             batter['records'] = [...batter.trbs, ...batter.yrbs]
             batter['position'] = batter.detail_position
             batter.detail_position = undefined
             batter.yrbs = undefined
             batter.trbs = undefined
+            console.log(batter)
             return batter
         } else {
+            const thisYear = []
             pitcher.yrps.map(el => {
                 if (el.age === "") el.age = String(2024 - Number(batter.birth_date.slice(0,4)))
                 if (el.team === "") el.team = pitcher.team
+                if (el.year === "2024") thisYear.push(el)
             })
+            pitcher['group'] = pitcher.position
+            pitcher['season'] = thisYear
             pitcher['records'] = [...pitcher.trps, ...pitcher.yrps]
             pitcher['position'] = pitcher.detail_position
             pitcher.detail_position = undefined
             pitcher.yrps = undefined
-            batter.trps = undefined
+            pitcher.trps = undefined
             return pitcher
         }
         // const batterArr = batter.map(el => {
@@ -217,6 +234,7 @@ export class GetService {
             'b.SO AS SO', 'b.GDP AS GDP', 'b.SH AS SH', 'b.SF AS SF', 'b.OBP AS OBP',
             'b.SLG AS SLG', 'b.OPS AS OPS', 'b.WRC AS WRC'
         ])
+        .where("b.year = '2024'")
         .orderBy('b.WAR', 'DESC')
         .limit(30)
         .getRawMany();
@@ -237,6 +255,7 @@ export class GetService {
             'p.SO AS p_SO', 'p.ROE AS ROE', 'p.BK AS BK', 'p.WP AS WP', 'p.RA9 AS RA9',
             'p.rRA9 AS rRA9', 'p.rRA9pf AS rRA9pf', 'p.FIP AS FIP'
         ])
+        .where("p.year = '2024'")
         .orderBy('p.WAR', 'DESC')
         .limit(30)
         .getRawMany();
