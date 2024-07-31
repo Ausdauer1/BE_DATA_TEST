@@ -79,7 +79,7 @@ export class GetService {
                 group: el.position,
                 position: el.detail_position,
                 season: thisYear,
-                records: [el.yrbs[el.yrbs.length - 1], ...el.trbs.reverse()],
+                records: [el.yrbs[el.yrbs.length - 1], ...thisYear, ...el.trbs.reverse()],
                 trbs: undefined,
                 yrbs: undefined,
                 detail_position: undefined
@@ -97,7 +97,7 @@ export class GetService {
                 group: el.position,
                 position: el.detail_position,
                 season: thisYear,
-                records: [...el.trps,...el.yrps],
+                records: [el.yrps[el.yrps.length - 1], ...thisYear, ...el.trps.reverse()],
                 trps: undefined,
                 yrps: undefined,
                 detail_position: undefined
@@ -172,7 +172,7 @@ export class GetService {
             })
             batter['group'] = batter.position
             batter['season'] = thisYear
-            batter['records'] = [...batter.trbs, ...batter.yrbs]
+            batter['records'] = [batter.yrbs[batter.yrbs.length - 1], ...thisYear, ...batter.trbs.reverse()],
             batter['position'] = batter.detail_position
             batter.detail_position = undefined
             batter.yrbs = undefined
@@ -188,7 +188,7 @@ export class GetService {
             })
             pitcher['group'] = pitcher.position
             pitcher['season'] = thisYear
-            pitcher['records'] = [...pitcher.trps, ...pitcher.yrps]
+            pitcher['records'] = [pitcher.yrps[pitcher.yrps.length - 1], ...thisYear, ...pitcher.trps.reverse()]
             pitcher['position'] = pitcher.detail_position
             pitcher.detail_position = undefined
             pitcher.yrps = undefined
