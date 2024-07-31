@@ -8,7 +8,9 @@ export class GetController {
 
     @Get('search')
     async searchPlayer(@Query('name') name: string) {
-        return this.getService.searchPlayer(name)
+        const decodedName = decodeURIComponent(name)
+        console.log(decodedName)
+        return this.getService.searchPlayer(decodedName)
     }
 
     @Get('detail')
