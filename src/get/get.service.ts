@@ -79,7 +79,7 @@ export class GetService {
                 group: el.position,
                 position: el.detail_position,
                 season: thisYear,
-                records: [...el.trbs, ...el.yrbs],
+                records: [el.yrbs[el.yrbs.length - 1], ...el.trbs.reverse()],
                 trbs: undefined,
                 yrbs: undefined,
                 detail_position: undefined
