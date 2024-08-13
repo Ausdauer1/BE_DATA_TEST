@@ -9,6 +9,7 @@ import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
 import { TOTAL_RECORD_BATTER } from './entity/totalRecordBatter.entity';
 import { TOTAL_RECORD_PITCHER } from './entity/totalRecordPitcher.entity';
 import { GetModule } from './get/get.module';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -23,7 +24,7 @@ import { GetModule } from './get/get.module';
       entities: [PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER], 
       synchronize: true 
     }), 
-    ScrapModule, GetModule
+    ScrapModule, GetModule, AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
