@@ -8,6 +8,7 @@ import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
 import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
 import { TOTAL_RECORD_BATTER } from './entity/totalRecordBatter.entity';
 import { TOTAL_RECORD_PITCHER } from './entity/totalRecordPitcher.entity';
+import { USER } from './entity/user.entity';
 import { GetModule } from './get/get.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -21,7 +22,7 @@ import { AuthModule } from './auth/auth.module';
       username: 'admin',
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
-      entities: [PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER], 
+      entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER], 
       synchronize: true 
     }), 
     ScrapModule, GetModule, AuthModule
