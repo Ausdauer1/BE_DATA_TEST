@@ -3,15 +3,18 @@ import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 @Entity('USER')
 export class USER {
     @PrimaryGeneratedColumn()
-    id: number
+    pid: number;
 
-    @Column()
-    username: string;
+    @Column("varchar")
+    id: string;
+
+    @Column("varchar")
+    nickname: string;
     
-    @Column()
+    @Column("varchar")
     password: string;
 
-    @Column()
+    @Column("varchar", {length: 50})
     email: string;
 
     @CreateDateColumn()
