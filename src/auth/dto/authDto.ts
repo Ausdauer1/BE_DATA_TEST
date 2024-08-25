@@ -19,7 +19,7 @@ export namespace AuthDTO {
     }
   
     export class SignIn {
-      @IsEmail()
+      @Length(4, 16)
       id: string;
   
       @IsString()
