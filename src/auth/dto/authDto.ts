@@ -19,11 +19,11 @@ export namespace AuthDTO {
     }
   
     export class SignIn {
-      @Length(4, 16)
+      @Length(5, 16)
       id: string;
   
       @IsString()
-      @Length(4, 20)
+      @Length(5, 20)
       password: string;
     }
   }
