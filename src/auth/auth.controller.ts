@@ -8,7 +8,8 @@ export class AuthController {
    
     @Post('/signup')
     async signUp(@Body() authDto: AuthDto.SignUp) {
-        const {id, email, nickname} = authDto
+        console.log(authDto)
+        const { id, email, nickname } = authDto
 
         const existId = await this.authService.findById(id)
         if (existId) {
@@ -25,7 +26,7 @@ export class AuthController {
             throw new ConflictException('이미 사용중인 이메일 입니다')
         }
 
-        const userEntity = await this.authService.create(authDto);
+        await this.authService.create(authDto);
         return '회원가입성공'; 
     }
     

@@ -13,6 +13,7 @@ export class AuthService {
     ) {}
 
     async create(authDto: AuthDto.SignUp) {
+        console.log(authDto)
         const userEntity = this.userRepository.create(authDto)
         console.log(userEntity)
         await this.userRepository.save(userEntity)
