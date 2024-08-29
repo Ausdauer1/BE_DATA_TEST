@@ -5,10 +5,10 @@ export class USER {
     @PrimaryGeneratedColumn()
     pid: number;
 
-    @Column("varchar")
+    @Column("varchar", {length: 20})
     id: string;
 
-    @Column("varchar")
+    @Column("varchar", {length: 20})
     nickname: string;
     
     @Column("varchar")
