@@ -23,7 +23,7 @@ export class AuthController {
 
         const existNickEmail = await this.authService.findByNickname(email)
         if (existNickEmail) {
-            throw new ConflictException('이미 사용중인 이메일 입니다')
+            throw new ConflictException(401)
         }
 
         await this.authService.create(authDto);
