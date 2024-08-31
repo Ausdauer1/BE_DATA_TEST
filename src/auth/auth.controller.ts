@@ -27,7 +27,7 @@ export class AuthController {
         }
 
         await this.authService.create(authDto);
-        return '회원가입성공'; 
+        return '회원가입성공!'; 
     }
     
 }
