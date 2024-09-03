@@ -13,12 +13,12 @@ export class AuthController {
 
         const existId = await this.authService.findById(id)
         if (existId) {
-            throw new ConflictException('이미 사용중인 아이디 입니다')
+            throw new ConflictException('이미 사용중인 아이디 입니다@@')
         }
 
         const existNickName = await this.authService.findByNickname(nickname)
         if (existNickName) {
-            throw new ConflictException('이미 사용중인 닉네임 입니다')
+            throw new ConflictException('이미 사용중인 닉네임 입니다@@')
         }
 
         const existNickEmail = await this.authService.findByNickname(email)
