@@ -318,7 +318,7 @@ export class ScrapTotalRecentService {
         console.log('통과')
         continue;
       }
-      await this.yearRecordPitcherRepository.save(record)
+      // await this.yearRecordPitcherRepository.save(record)
     }
   }
 }

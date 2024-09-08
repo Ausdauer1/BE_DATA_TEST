@@ -17,7 +17,7 @@ export class YEAR_RECORD_BATTER {
     @Column("char", {length: 5})
     statiz_id_batter: string;
 
-    @Column("char", {length: 5, default: "2024"})
+    @Column("varchar", {length: 5, default: "2024"})
     year: string;
 
     @Column("varchar", {length : 5})
