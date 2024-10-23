@@ -1,9 +1,18 @@
-POST http://localhost:3000/auth/signup HTTP/1.1
+
+# POST http://localhost:3000/auth/signup HTTP/1.1
+# content-type: application/json
+
+# {
+#     "id": 1234,
+#     "nickname": "도영맘3",
+#     "password": "abc123",
+#     "email": "email@email.com"
+# }
+
+POST http://localhost:3000/auth/signin HTTP/1.1
 content-type: application/json
 
 {
-    "id": 123,
-    "nickname": "도영맘2",
-    "password": "abc123",
-    "email": "email@email.com"
+    "email": "b@email.com",
+    "password": "abc123"
 }
