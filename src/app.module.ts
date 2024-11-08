@@ -14,6 +14,7 @@ import { AuthModule } from './auth/auth.module';
 import * as session from 'express-session';
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
+import { CheckSessionMiddleware } from './session.middleware';
 
 
 @Module({
@@ -34,28 +35,34 @@ import { createClient } from 'redis';
   providers: [AppService],
 })
 
-export class AppModule {}
+// export class AppModule {}
 
-// export class AppModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     const redisClient = createClient({ url: 'redis://localhost:6379' }); // Redis 클라이언트 생성
-//     redisClient.connect().catch(console.error);
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    const redisClient = createClient({ url: 'redis://:dangsan10@43.201.37.98:6379' }); // Redis 클라이언트 생성
+    redisClient.connect().catch(console.error);
 
-//     consumer
-//       .apply(
-//         session({
-//           store: new RedisStore({
-//             client: redisClient
-//           }), // Redis 저장소 설정
-//           secret: 'your-secret-key', // 세션 암호화 키
-//           resave: false,
-//           saveUninitialized: false,
-//           cookie: {
-//             secure: false, // HTTPS 사용 시 true로 설정
-//             maxAge: 1000 * 60 * 60 * 12, // 1일
-//           },
-//         }),
-//       )
-//       .forRoutes('*'); // 모든 경로에 세션 적용
-//   }
-// }
+    consumer
+      .apply(
+        session({
+          store: new RedisStore({
+            client: redisClient,
+            ttl: 900,
+            prefix: 'session:'
+          }), // Redis 저장소 설정
+          secret: 'your-secret-key', // 세션 암호화 키
+          resave: false,
+          saveUninitialized: false,
+          cookie: {
+            secure: false, // HTTPS 사용 시 true로 설정
+            // maxAge: 1000 * 60 * 5, // 1일
+          },
+        }),
+      )
+      .forRoutes('*'); // 모든 경로에 세션 적용
+      // Apply session checking middleware to protected routes
+    consumer
+    .apply(CheckSessionMiddleware)
+    .forRoutes('player/*'); // Apply CheckSessionMiddleware only to 'protected'
+  }
+}

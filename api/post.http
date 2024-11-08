@@ -9,10 +9,18 @@
 #     "email": "email@email.com"
 # }
 
-POST http://localhost:3000/auth/signin HTTP/1.1
+# POST http://43.201.105.90:3000/auth/signin HTTP/1.1
+# content-type: application/json
+
+# {
+#     "email": "c@email.com",
+#     "password": "abcd1234"
+# }
+
+POST http://localhost:3000/auth/signin2 HTTP/1.1
 content-type: application/json
 
 {
-    "email": "b@email.com",
-    "password": "abc123"
+    "password": "pass1",
+    "email": "user1"
 }

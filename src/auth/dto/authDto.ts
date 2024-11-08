@@ -19,11 +19,11 @@ export namespace AuthDto {
     }
   
     export class SignIn {
-      @IsEmail()
+      // @IsEmail()
       email: string;
   
-      @IsString()
-      @Length(4, 20)
+      // @IsString()
+      // @Length(8, 20)
       password: string;
     }
   }

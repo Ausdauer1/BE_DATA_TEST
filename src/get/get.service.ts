@@ -177,7 +177,7 @@ export class GetService {
             batter.detail_position = undefined
             batter.yrbs = undefined
             batter.trbs = undefined
-            console.log(batter)
+            // console.log(batter)
             return batter
         } else {
             const thisYear = []
