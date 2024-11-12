@@ -16,15 +16,15 @@ export class AuthController {
         //     throw new ConflictException('이미 사용중인 아이디 입니다')
         // }
 
-        const existNickName = await this.authService.findByNickname(nickname)
-        if (existNickName) {
-            throw new ConflictException('이미 사용중인 닉네임 입니다')
-        }
+        // const existNickName = await this.authService.findByNickname(nickname)
+        // if (existNickName) {
+        //     throw new ConflictException('이미 사용중인 닉네임 입니다')
+        // }
 
-        const existNickEmail = await this.authService.findByEmail(email)
-        if (existNickEmail) {
-            throw new ConflictException('이미 사용중인 이메일 입니다')
-        }
+        // const existNickEmail = await this.authService.findByEmail(email)
+        // if (existNickEmail) {
+        //     throw new ConflictException('이미 사용중인 이메일 입니다')
+        // }
 
         await this.authService.create(authDto);
         return '회원가입성공!'; 
