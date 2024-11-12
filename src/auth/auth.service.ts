@@ -22,7 +22,8 @@ export class AuthService {
         console.log(authDto)
         const userEntity = this.userRepository.create(authDto)
         console.log(userEntity)
-        await this.userRepository.save(userEntity)
+        const info = await this.userRepository.save(userEntity)
+        return info
     }
 
     // async findById(id: string) {

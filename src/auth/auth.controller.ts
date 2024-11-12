@@ -26,8 +26,9 @@ export class AuthController {
         //     throw new ConflictException('이미 사용중인 이메일 입니다')
         // }
 
-        await this.authService.create(authDto);
-        return res.status(200).json({ message: 'Login successful' });
+        const create = await this.authService.create(authDto);
+        console.log(create)
+        return res.status(200).json(create);
     }
 
     @Post('/signin')
