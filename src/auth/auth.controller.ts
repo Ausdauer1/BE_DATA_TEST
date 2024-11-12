@@ -7,7 +7,7 @@ export class AuthController {
     constructor(private readonly authService: AuthService) {}
    
     @Post('/signup')
-    async signUp(@Body() authDto: AuthDto.SignUp, res: any) {
+    async signUp(@Body() authDto: AuthDto.SignUp,  @Res() res: any) {
         console.log(authDto)
         const { email, nickname } = authDto
 
