@@ -7,7 +7,7 @@ export class AuthController {
     constructor(private readonly authService: AuthService) {}
    
     @Post('/signup')
-    async signUp(@Body() authDto: AuthDto.SignUp) {
+    async signUp(@Body() authDto: AuthDto.SignUp, res: any) {
         console.log(authDto)
         const { email, nickname } = authDto
 
@@ -27,7 +27,7 @@ export class AuthController {
         // }
 
         await this.authService.create(authDto);
-        return '회원가입성공!'; 
+        return res.status(200).json({ message: 'Login successful' });
     }
 
     @Post('/signin')
