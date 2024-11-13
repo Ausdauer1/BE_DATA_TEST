@@ -27,6 +27,7 @@ export class AuthController {
         // }
 
         const create = await this.authService.create(authDto);
+        create["signup"] = "ok"
         console.log(create)
         return res.status(200).json(create);
     }

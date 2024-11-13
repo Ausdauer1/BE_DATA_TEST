@@ -63,6 +63,6 @@ export class AppModule implements NestModule {
       // Apply session checking middleware to protected routes
     consumer
     .apply(CheckSessionMiddleware)
-    // .forRoutes('player/*'); // Apply CheckSessionMiddleware only to 'protected'
+    .forRoutes('player/detail'); // Apply CheckSessionMiddleware only to 'protected'
   }
 }

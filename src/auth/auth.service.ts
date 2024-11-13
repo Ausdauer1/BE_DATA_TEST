@@ -63,7 +63,22 @@ export class AuthService {
         if (!user) return false
 
         if (email === user.email && password === user.password) {
+            
+            const keyArr = await this.redisClient.keys('*')
+            const deletePromises = keyArr.map(async e => {
+                console.log(e)
+                const valueString = await this.redisClient.get(`${e}`)
+                const value: object = JSON.parse(valueString)
+                if (value["user"] === email) {
+                    await this.redisClient.del(`${e}`)
+                    console.log("delete")
+                }
+            })
+
+            await Promise.all(deletePromises);
+
             req.session.user = user.email;
+            await req.session.save();
             return true;
         }
     

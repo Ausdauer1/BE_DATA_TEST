@@ -14,19 +14,6 @@ export class CheckSessionMiddleware implements NestMiddleware {
       const sessionKey = `session:${req.sessionID}`; 
       console.log(req.session.user)
       const ttl = await this.redisClient.TTL(sessionKey); // Get session TTL
-      console.log(ttl)
-      console.log(await this.redisClient.keys('*'))
-      
-      const keyArr = await this.redisClient.keys('*')
-      keyArr.map(async e => {
-        console.log(e)
-        const valueString = await this.redisClient.get(`${e}`)
-        const value: object = JSON.parse(valueString)
-        if (value["user"] === req.session.user) {
-          await this.redisClient.del(`${e}`)
-        }
-        console.log(value["user"])
-      })
 
       if (ttl > 0) {
         console.log(`Session for user ${req.session.user.user} is active, TTL: ${ttl} seconds.`);
