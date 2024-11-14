@@ -32,6 +32,17 @@ export class AuthController {
         return res.status(200).json(create);
     }
 
+    @Post('/signup/social')
+    async signUpSoical(@Body() authDto: AuthDto.signUpSocial,  @Res() res: any) {
+        console.log(authDto)
+        const { email, nickname } = authDto
+
+        const create = await this.authService.create(authDto);
+        create["signup"] = "ok"
+        console.log(create)
+        return res.status(200).json(create);
+    }
+
     @Post('/signin')
     async signIn(@Body() authDto: AuthDto.SignIn, @Req() req: any, @Res() res: any) {
         const { email, password } = authDto

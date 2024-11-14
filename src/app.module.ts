@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScrapModule } from './scrap/scrap.module';
@@ -63,6 +63,9 @@ export class AppModule implements NestModule {
       // Apply session checking middleware to protected routes
     consumer
     .apply(CheckSessionMiddleware)
-    .forRoutes('player/detail'); // Apply CheckSessionMiddleware only to 'protected'
+    .forRoutes(
+      { path: 'player/detail', method: RequestMethod.ALL },
+      { path: 'player/search', method: RequestMethod.ALL },
+    ); // Apply CheckSessionMiddleware only to 'protected'
   }
 }

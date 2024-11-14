@@ -18,7 +18,7 @@ export class AuthService {
 
     
 
-    async create(authDto: AuthDto.SignUp) {
+    async create(authDto: AuthDto.SignUp | AuthDto.signUpSocial) {
         console.log(authDto)
         const userEntity = this.userRepository.create(authDto)
         console.log(userEntity)

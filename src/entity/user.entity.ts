@@ -8,7 +8,7 @@ export class USER {
     @Column("varchar", {length: 20})
     nickname: string;
     
-    @Column("varchar")
+    @Column("varchar", {nullable: true})
     password: string;
 
     @Column("varchar", {length: 50})
@@ -20,4 +20,6 @@ export class USER {
     @UpdateDateColumn()
     updated_at: Date; // Last updated date
 
+    @Column("varchar", {length: 20})
+    type: string;
 }
