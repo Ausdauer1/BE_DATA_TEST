@@ -28,6 +28,7 @@ export class AuthController {
 
         const create = await this.authService.create(authDto);
         create["signup"] = "ok"
+        delete create["password"]
         console.log(create)
         return res.status(200).json(create);
     }
@@ -48,8 +49,11 @@ export class AuthController {
         const { email, password } = authDto
         const result = await this.authService.login(email, password, req);
         if (result) {
-        return res.status(200).json({ 
-            sid: result,
+        return res.status(200).json({
+            id: result.id,
+            nickname: result.nickname,
+            email: result.email, 
+            sid: result.sid,
             message: 'Login successful' 
         });
         } else {

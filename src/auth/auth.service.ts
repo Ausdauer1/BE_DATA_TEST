@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { USER } from 'src/entity/user.entity';
 import { AuthDto } from './dto/authDto';
 import { createClient } from 'redis';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,9 @@ export class AuthService {
         console.log(authDto)
         const userEntity = this.userRepository.create(authDto)
         console.log(userEntity)
+        if (userEntity.password) {
+            userEntity.password = await bcrypt.hash(userEntity.password, 10)
+        }
         const info = await this.userRepository.save(userEntity)
         return info
     }
@@ -50,7 +54,7 @@ export class AuthService {
         })
     }
 
-    async login(email: string, password: string, req): Promise<boolean> {
+    async login(email: string, password: string, req): Promise<any> {
         // 여기에서 실제 사용자 인증 로직을 처리합니다 (DB 조회 또는 하드코딩 예시)
         
         
@@ -80,7 +84,12 @@ export class AuthService {
 
             req.session.user = user.email;
             await req.session.save();
-            return req.sessionID;
+            return {
+                sid: req.sessionID,
+                id: user.id,
+                email: user.email,
+                nickname: user.nickname
+            }
         }
     
         return false;
