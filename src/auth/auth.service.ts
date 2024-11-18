@@ -56,9 +56,10 @@ export class AuthService {
         
         const user = await this.userRepository.findOne({
             where: {
-                email
+                email, password
             }
         })
+        console.log(email,password)
         console.log(user)
         if (!user) return false
 
@@ -79,7 +80,7 @@ export class AuthService {
 
             req.session.user = user.email;
             await req.session.save();
-            return true;
+            return req.sessionID;
         }
     
         return false;
@@ -88,7 +89,6 @@ export class AuthService {
     async login2(id: string, password: string, req): Promise<boolean> {
         // 여기에서 실제 사용자 인증 로직을 처리합니다 (DB 조회 또는 하드코딩 예시)
         const validUser = { id: 'user1', password: 'pass1' }; // 예시 사용자
-        
         
         if (id === validUser.id && password === validUser.password) {
             req.session.user = { username: validUser.id }; // 세션에 사용자 정보 저장

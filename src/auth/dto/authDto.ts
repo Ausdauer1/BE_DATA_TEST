@@ -49,4 +49,13 @@ export namespace AuthDto {
       // @Length(8, 20)
       password: string;
     }
+
+    export class signInSocial {
+      // @IsEmail()
+      email: string;
+  
+      // @IsString()
+      // @Length(8, 20)
+      password: string;
+    }
   }

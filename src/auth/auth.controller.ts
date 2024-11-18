@@ -48,6 +48,20 @@ export class AuthController {
         const { email, password } = authDto
         const result = await this.authService.login(email, password, req);
         if (result) {
+        return res.status(200).json({ 
+            sid: result,
+            message: 'Login successful' 
+        });
+        } else {
+        return res.status(401).json({ message: 'Invalid credentials' });
+        }
+    }
+
+    @Post('/signin/social')
+    async signInSocial(@Body() authDto: AuthDto.SignIn, @Req() req: any, @Res() res: any) {
+        const { email, password } = authDto
+        const result = await this.authService.login(email, password, req);
+        if (result) {
         return res.status(200).json({ message: 'Login successful' });
         } else {
         return res.status(401).json({ message: 'Invalid credentials' });
