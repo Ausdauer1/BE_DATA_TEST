@@ -11,9 +11,9 @@ export class AuthController {
         console.log(authDto.email)
         const existEmail = await this.authService.findByEmail(authDto.email)
         if (existEmail) {
-            return res.send(false)
+            return res.status(200).json({ exist : true })
         } else {
-            return res.send(true)
+            return res.status(200).json({ exist : false })
         }
     }
 
