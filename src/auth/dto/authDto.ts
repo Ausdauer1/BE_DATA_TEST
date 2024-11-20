@@ -6,9 +6,9 @@ export namespace AuthDto {
       // id: string;
 
       @IsString()
-      @MinLength(2, {
-        message: "닉네임의 길이가 짧아용ㅠㅠ"
-      })
+      // @MinLength(2, {
+      //   message: "닉네임의 길이가 짧아용ㅠㅠ"
+      // })
       nickname: string;
 
       @IsString()
@@ -31,9 +31,9 @@ export namespace AuthDto {
       // id: string;
 
       @IsString()
-      @MinLength(2, {
-        message: "닉네임의 길이가 짧아용ㅠㅠ"
-      })
+      // @MinLength(2, {
+      //   message: "닉네임의 길이가 짧아용ㅠㅠ"
+      // })
       nickname: string;
 
       @IsEmail()
