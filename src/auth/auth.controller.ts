@@ -25,7 +25,7 @@ export class AuthController {
         // if (existNickEmail) {
         //     throw new ConflictException('이미 사용중인 이메일 입니다')
         // }
-
+        if (!authDto.type) authDto.type = "email"
         const create = await this.authService.create(authDto);
         create["signup"] = "ok"
         delete create["password"]
@@ -37,7 +37,8 @@ export class AuthController {
     async signUpSoical(@Body() authDto: AuthDto.signUpSocial,  @Res() res: any) {
         console.log(authDto)
         const { email, nickname } = authDto
-
+        // 타입이 안들어올경우 타입
+        if (!authDto.type) authDto.type = "social"
         const create = await this.authService.create(authDto);
         create["signup"] = "ok"
         console.log(create)

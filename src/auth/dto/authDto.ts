@@ -19,6 +19,9 @@ export namespace AuthDto {
 
       @IsEmail()
       email: string;
+      
+      @IsString()
+      type: string;
   
     }
 

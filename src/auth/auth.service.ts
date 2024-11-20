@@ -55,19 +55,19 @@ export class AuthService {
     }
 
     async login(email: string, password: string, req): Promise<any> {
-        // 여기에서 실제 사용자 인증 로직을 처리합니다 (DB 조회 또는 하드코딩 예시)
-        
+        // 여기에서 실제 사용자 인증 로직을 처리합니다 (DB 조회 또는 하드코딩 예시) 
         
         const user = await this.userRepository.findOne({
             where: {
-                email, password
+                email
             }
         })
-        console.log(email,password)
-        console.log(user)
-        if (!user) return false
 
-        if (email === user.email && password === user.password) {
+        let passMatch: boolean;
+        
+        if (!user) return false
+        if (user.type == "email") await bcrypt.compare(password, user.password)
+        if (user.type === "social" || (email === user.email && passMatch)) {
             
             const keyArr = await this.redisClient.keys('*')
             const deletePromises = keyArr.map(async e => {
