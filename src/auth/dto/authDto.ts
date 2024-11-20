@@ -62,4 +62,9 @@ export namespace AuthDto {
       // @Length(8, 20)
       password: string;
     }
+
+    export class checkEmail {
+      @IsEmail()
+      email: string;
+    }
   }

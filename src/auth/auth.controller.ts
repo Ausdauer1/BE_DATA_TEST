@@ -6,6 +6,18 @@ import { AuthDto } from './dto/authDto';
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
    
+    @Post('/check')
+    async checkEmail(@Body() authDto: AuthDto.checkEmail,  @Res() res: any) {
+        console.log(authDto.email)
+        const existEmail = await this.authService.findByEmail(authDto.email)
+        if (existEmail) {
+            return res.send(false)
+        } else {
+            return res.send(true)
+        }
+    }
+
+
     @Post('/signup')
     async signUp(@Body() authDto: AuthDto.SignUp,  @Res() res: any) {
         console.log(authDto)
