@@ -1,4 +1,4 @@
-import { IsEmail, IsString ,Length, MinDate, MinLength} from "class-validator";
+import { IsEmail, IsOptional, IsString ,Length, MinDate, MinLength} from "class-validator";
 export namespace AuthDto {
     export class SignUp {
       // @IsString()
@@ -45,11 +45,12 @@ export namespace AuthDto {
     }
   
     export class SignIn {
-      // @IsEmail()
+      @IsEmail()
       email: string;
   
-      // @IsString()
-      // @Length(8, 20)
+      @IsOptional()
+      @IsString()
+      @Length(8, 20)
       password: string;
     }
 

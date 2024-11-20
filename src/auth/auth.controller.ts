@@ -48,6 +48,7 @@ export class AuthController {
     @Post('/signin')
     async signIn(@Body() authDto: AuthDto.SignIn, @Req() req: any, @Res() res: any) {
         const { email, password } = authDto
+        console.log(password)
         const result = await this.authService.login(email, password, req);
         if (result) {
         return res.status(200).json({
