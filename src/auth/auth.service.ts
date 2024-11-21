@@ -66,7 +66,7 @@ export class AuthService {
         let passMatch: boolean;
         
         if (!user) return false
-        if (user.type == "email") await bcrypt.compare(password, user.password)
+        if (user.type == "email") passMatch = await bcrypt.compare(password, user.password)
         if (user.type === "google" || (email === user.email && passMatch)) {
             
             const keyArr = await this.redisClient.keys('*')
