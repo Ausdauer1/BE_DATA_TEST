@@ -12,8 +12,8 @@ export namespace AuthDto {
     @Length(8, 20, { message: '비밀번호는 최소 8자 ~ 최대 20자로 설정해주세요' })
     password: string;
 
-    @IsString({ message: '문자열로 작성해주세요' })
     @IsOptional()
+    @IsString({ message: '문자열로 작성해주세요' })
     type: string;
   }
 
@@ -25,8 +25,8 @@ export namespace AuthDto {
     @IsEmail({}, { message: '이메일 형식에 맞지 않습니다' })
     email: string;
 
-    @IsString({ message: '문자열로 작성해주세요' })
     @IsOptional()
+    @IsString({ message: '문자열로 작성해주세요' })
     type: string;
   }
 
@@ -37,15 +37,6 @@ export namespace AuthDto {
     @IsOptional()
     @IsString({ message: '문자열로 작성해주세요' })
     @Length(8, 20, { message: '비밀번호는 최소 8자 ~ 최대 20자로 설정해주세요' })
-    password: string;
-  }
-
-  export class signInSocial {
-    @IsEmail({}, { message: '이메일 형식에 맞지 않습니다' })
-    email: string;
-
-    // @IsString()
-    // @Length(8, 20)
     password: string;
   }
 
