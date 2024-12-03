@@ -8,7 +8,7 @@ import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
 import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
 import { TOTAL_RECORD_BATTER } from './entity/totalRecordBatter.entity';
 import { TOTAL_RECORD_PITCHER } from './entity/totalRecordPitcher.entity';
-import { USER } from './entity/user.entity';
+import { USER } from './auth/entity/user.entity';
 import { GetModule } from './get/get.module';
 import { AuthModule } from './auth/auth.module';
 import * as session from 'express-session';
@@ -39,7 +39,7 @@ import { CheckSessionMiddleware } from './session.middleware';
 
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    const redisClient = createClient({ url: 'redis://:dangsan10@43.201.37.98:6379' }); // Redis 클라이언트 생성
+    const redisClient = createClient({ url: 'redis://:dangsan10@43.201.105.90:6379' }); // Redis 클라이언트 생성
     redisClient.connect().catch(console.error);
 
     consumer
