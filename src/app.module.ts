@@ -45,7 +45,7 @@ import { ConfigModule } from "@nestjs/config";
 
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    const redisClient = createClient({ url: 'redis://:dangsan10@43.201.105.90:6379' }); // Redis 클라이언트 생성
+    const redisClient = createClient({ url: 'redis://:dangsan10@13.209.70.240:6379' }); // Redis 클라이언트 생성
     redisClient.connect().catch(console.error);
 
     consumer

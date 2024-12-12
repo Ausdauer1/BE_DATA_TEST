@@ -16,7 +16,7 @@ import { SignInDto } from './dto/signIn.dto';
 @Injectable()
 export class AuthService {
   private redisClient = createClient({
-    url: 'redis://:dangsan10@43.201.105.90:6379'
+    url: 'redis://:dangsan10@13.209.70.240:6379'
   });
   constructor(
     @InjectRepository(USER)

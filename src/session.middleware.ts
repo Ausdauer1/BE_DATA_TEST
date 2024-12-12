@@ -3,7 +3,7 @@ import { createClient } from 'redis';
 
 @Injectable()
 export class CheckSessionMiddleware implements NestMiddleware {
-  private redisClient = createClient({ url: 'redis://:dangsan10@43.201.105.90:6379'});
+  private redisClient = createClient({ url: 'redis://:dangsan10@13.209.70.240:6379'});
 
   constructor() {
     this.redisClient.connect().catch(console.error);
