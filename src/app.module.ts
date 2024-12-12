@@ -17,6 +17,7 @@ import { createClient } from 'redis';
 import { CheckSessionMiddleware } from './session.middleware';
 import { CommunityModule } from './community/community.module';
 import { POST } from './community/entity/post.entity';
+import { ConfigModule } from "@nestjs/config";
 
 
 @Module({
@@ -32,6 +33,9 @@ import { POST } from './community/entity/post.entity';
       synchronize: true 
     }), 
     ScrapModule, GetModule, AuthModule, CommunityModule, // 인증 모듈 (추가)
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
