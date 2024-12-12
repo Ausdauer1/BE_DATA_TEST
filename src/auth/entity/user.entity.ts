@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import { POST } from "src/community/entity/post.entity";
 
 @Entity('USER')
 export class USER {
@@ -22,4 +23,7 @@ export class USER {
 
     @Column("varchar", {length: 20})
     type: string;
+
+    @OneToMany(() => POST, post => post.user)
+    post: POST[];
 }

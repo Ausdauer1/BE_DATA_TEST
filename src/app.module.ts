@@ -15,6 +15,8 @@ import * as session from 'express-session';
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
 import { CheckSessionMiddleware } from './session.middleware';
+import { CommunityModule } from './community/community.module';
+import { POST } from './community/entity/post.entity';
 
 
 @Module({
@@ -26,10 +28,10 @@ import { CheckSessionMiddleware } from './session.middleware';
       username: 'admin',
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
-      entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER], 
+      entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER, POST], 
       synchronize: true 
     }), 
-    ScrapModule, GetModule, AuthModule, // 인증 모듈 (추가)
+    ScrapModule, GetModule, AuthModule, CommunityModule, // 인증 모듈 (추가)
   ],
   controllers: [AppController],
   providers: [AppService],
