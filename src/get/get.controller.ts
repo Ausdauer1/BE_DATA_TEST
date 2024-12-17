@@ -1,8 +1,11 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { GetService } from './get.service';
 import { query } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('player')
+@ApiTags('선수정보 API')
+
 export class GetController {
     constructor(private readonly getService: GetService) {}
 

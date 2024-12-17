@@ -4,8 +4,10 @@ import { SignUpEmailDto } from './dto/signUpEmail.dto';
 import { SignUpSocialDto } from './dto/signUpSocial.dto'; 
 import { SignInDto } from './dto/signIn.dto'; 
 import { CheckEmailDto } from './dto/emailCheck.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('auth')
+@ApiTags('유저관련 API')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

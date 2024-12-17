@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid'; // Unique ID 생성용
 
@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { POST } from './entity/post.entity';
 import { CreatePostDto } from './dto/post.dto';
 import { ConfigService } from '@nestjs/config';
+import { UploadFileDto } from './dto/uploadFile.dto';
 
 @Injectable()
 export class CommunityService {
@@ -25,6 +26,32 @@ export class CommunityService {
         secretAccessKey: this.configService.get('ACCESSSECRET'),
       },
     });
+  }
+
+  async uploadFile(file: Express.Multer.File) {
+    let fileUrl: string | undefined;
+    if (file) {
+      const fileKey = `${uuidv4()}-${file.originalname}`; // 고유 파일 이름 생성
+
+      const params = {
+        Bucket: this.bucketName,
+        Key: fileKey,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
+
+      try {
+        await this.s3Client.send(new PutObjectCommand(params))
+        fileUrl = `https://${this.bucketName}.s3.ap-northeast-2.amazonaws.com/${fileKey}`
+
+        return { fileUrl }
+      } catch (error) {
+        console.log(error.message)
+        throw new InternalServerErrorException(`S3 업로드 실패`);
+      }
+    } else {
+      throw new BadRequestException("잘못된 요청입니다");
+    }
   }
 
   async createPost(file: Express.Multer.File, createPostDto: CreatePostDto) {
