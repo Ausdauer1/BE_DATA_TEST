@@ -11,19 +11,20 @@ export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}
 
   @Post('create')
-  @ApiOperation({ summary: '게시물 생성 API', description: '파일이 없을 시, file값 없이 api전송' })
-  @UseInterceptors(FileInterceptor('file'))
-  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: '게시물 생성 API', description: "게시물 생성 api입니다" })
   async createPost(
-    @UploadedFile() file: Express.Multer.File, 
     @Body() createPostDto: CreatePostDto
   ) {
-    return await this.communityService.createPost(file, createPostDto)
+    return await this.communityService.createPost( createPostDto)
   }
 
   @Post('uploadFile')
   @ApiOperation({ summary: '파일업로드 API' })
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file', {
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10MB로 제한 설정
+    },
+  }))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: '업로드할 파일',

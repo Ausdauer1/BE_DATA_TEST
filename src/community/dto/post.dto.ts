@@ -19,11 +19,4 @@ export class CreatePostDto {
   @IsString({ message: '카테고리는 문자열로 작성하여주세요' })
   @ApiProperty({ description: '카테고리(팀 이름)' })
   category: string;
-
-  @ApiProperty({ 
-    description: '업로드 파일',
-    type: 'string',
-    format: 'binary',
-  })
-  file: any
 }

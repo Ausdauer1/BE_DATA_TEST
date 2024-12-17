@@ -42,41 +42,20 @@ export class CommunityService {
 
       try {
         await this.s3Client.send(new PutObjectCommand(params))
-        fileUrl = `https://${this.bucketName}.s3.ap-northeast-2.amazonaws.com/${fileKey}`
+        fileUrl = `https://${this.bucketName}.s3.ap-northeast-2.amazonaws.com/${fileKey}`;
 
-        return { fileUrl }
+        return { fileUrl };
       } catch (error) {
         console.log(error.message)
         throw new InternalServerErrorException(`S3 업로드 실패`);
       }
     } else {
-      throw new BadRequestException("잘못된 요청입니다");
+      throw new BadRequestException("file값이 없습니다");
     }
   }
 
-  async createPost(file: Express.Multer.File, createPostDto: CreatePostDto) {
-    console.log(file)
-    console.log(createPostDto)
-    let fileUrl: string | undefined;
-    if (file) {
-      const fileKey = `${uuidv4()}-${file.originalname}`; // 고유 파일 이름 생성
-
-      const params = {
-        Bucket: this.bucketName,
-        Key: fileKey,
-        Body: file.buffer,
-        ContentType: file.mimetype,
-      };
-
-      try {
-        await this.s3Client.send(new PutObjectCommand(params))
-        fileUrl = `https://${this.bucketName}.s3.ap-northeast-2.amazonaws.com/${fileKey}`
-      } catch (error) {
-        console.log(error.message)
-        throw new InternalServerErrorException(`S3 업로드 실패`);
-      }
-    }
-    console.log(fileUrl)
+  async createPost(createPostDto: CreatePostDto) {
+    
     const testJSon = {
       title: createPostDto.title,
       content: createPostDto.content,
@@ -86,7 +65,6 @@ export class CommunityService {
 
     const postEntity = this.postRepository.create(testJSon);
     console.log(postEntity);
-    postEntity.file_path = fileUrl
     const newObject = await this.postRepository.save(postEntity);
     console.log(newObject);
 
