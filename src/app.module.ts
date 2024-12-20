@@ -53,7 +53,7 @@ export class AppModule implements NestModule {
         session({
           store: new RedisStore({
             client: redisClient,
-            ttl: 900,
+            ttl: 60 * 20,
             prefix: 'session:'
           }), // Redis 저장소 설정
           secret: 'your-secret-key', // 세션 암호화 키
@@ -72,6 +72,7 @@ export class AppModule implements NestModule {
     .forRoutes(
       { path: 'player/detail', method: RequestMethod.ALL },
       { path: 'player/search', method: RequestMethod.ALL },
+      { path: 'community/*', method: RequestMethod.POST}
     ); // Apply CheckSessionMiddleware only to 'protected'
   }
 }
