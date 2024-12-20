@@ -2,29 +2,16 @@ import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Query } fro
 import { CommunityService } from './community.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/post.dto';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody} from '@nestjs/swagger';
-import { UploadFileDto } from './dto/uploadFile.dto';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 
 @Controller('community')
 @ApiTags('게시판 API')
 export class CommunityController {
   constructor(private readonly communityService: CommunityService) {}
 
-  @Post('create')
-  @ApiOperation({ summary: '게시물 생성 API', description: "게시물 생성 api입니다" })
-  async createPost(
-    @Body() createPostDto: CreatePostDto
-  ) {
-    return await this.communityService.createPost( createPostDto)
-  }
-
   @Post('uploadFile')
   @ApiOperation({ summary: '파일업로드 API' })
-  @UseInterceptors(FileInterceptor('file', {
-    limits: {
-      fileSize: 10 * 1024 * 1024, // 10MB로 제한 설정
-    },
-  }))
+  @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: '업로드할 파일',
@@ -38,19 +25,25 @@ export class CommunityController {
       },
     },
   })
-  async uploadFile(
-    @UploadedFile() file: Express.Multer.File
-  ) {
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
     return await this.communityService.uploadFile(file)
   }
 
+  @Post('create')
+  @ApiOperation({ summary: '게시물 생성 API' })
+  async createPost(@Body() createPostDto: CreatePostDto) {
+    return await this.communityService.createPost( createPostDto)
+  }
 
   @Get()
-  async getPosts(@Query('section') section: string) {
-    return await this.communityService.getPosts(section)
+  @ApiOperation({ summary: '게시물 조회 API (전체)' })
+  @ApiQuery({ name: 'category', required: false })
+  async getPosts(@Query('category') category: string) {
+    return await this.communityService.getPosts(category)
   }
 
   @Get('one')
+  @ApiOperation({ summary: '게시물 조회 API (개별)' })
   async getOnePost(@Query('id') id: number) {
     return await this.communityService.getOnePost(id)
   }

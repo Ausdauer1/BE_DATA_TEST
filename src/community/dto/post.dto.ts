@@ -3,10 +3,9 @@ import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreatePostDto {
-  @IsNumberString({}, { message: "user_id를 입력해주세요"})
+  @IsNumber({}, { message: "user_id를 입력해주세요"})
   @ApiProperty({ description: '유저 id' })
-  // @Transform(({ value }) => parseInt(value, 10)) 
-  user_id: string;
+  user_id: number;
 
   @IsString({ message: '제목은 문자열로 작성하여주세요' })
   @ApiProperty({ description: '제목' })

@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { SignUpSocialDto } from './dto/signUpSocial.dto';
 import { SignUpEmailDto } from './dto/signUpEmail.dto';
 import { SignInDto } from './dto/signIn.dto';
+import { CheckEmailDto } from './dto/checkEmail.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,8 +27,8 @@ export class AuthService {
     this.redisClient.connect().catch(console.error);
   }
   // 이메일 중복확인
-  async emailCheck(email: string) {
-    return (await this.authRepo.findByEmail(email)) 
+  async emailCheck(checkEmailDto: CheckEmailDto) {
+    return (await this.authRepo.findByEmail(checkEmailDto.email)) 
     ? { exist: true } 
     : { exist: false };
   }
