@@ -33,7 +33,7 @@ export function setUpSession(app: INestApplication): void {
       ttl: 30, // time to live
       cookie: {
         httpOnly: true,
-        secure: true,
+        secure: false,
         maxAge: 30000,  //세션이 redis에 저장되는 기간은 maxAge로 조절한다.(ms)
       }
     })
