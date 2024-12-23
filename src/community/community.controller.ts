@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Query, Delete, Put } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/post.dto';
+import { DeletePostDto } from './dto/delete.dto';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { ModifyPostDto } from './dto/modify.dto';
 
 @Controller('community')
 @ApiTags('게시판 API')
@@ -27,6 +29,18 @@ export class CommunityController {
   })
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     return await this.communityService.uploadFile(file)
+  }
+
+  @Delete('delete')
+  @ApiOperation({ summary: '게시물삭제 API' })
+  async deletePost(@Body() deletePostDto: DeletePostDto) {
+    return await this.communityService.deletePost(deletePostDto)
+  }
+
+  @Put('modify')
+  @ApiOperation({ summary: '게시물수정 API' })
+  async modifyPost(@Body() modifyPostDto: ModifyPostDto) {
+    return await this.communityService.modifyPost(modifyPostDto)
   }
 
   @Post('create')

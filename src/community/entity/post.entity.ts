@@ -33,6 +33,9 @@ export class POST {
   @Column({ type: 'varchar', length: 500, nullable: true })
   file_path: string; // 파일 저장 경로
 
+  @Column({ type: 'char', default: "N"})
+  delYN: string // 삭제여부
+
   @CreateDateColumn()
   createdAt: Date; // 생성 시간
 

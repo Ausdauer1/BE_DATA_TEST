@@ -6,6 +6,8 @@ import { Repository } from 'typeorm';
 import { POST } from './entity/post.entity';
 import { CreatePostDto } from './dto/post.dto';
 import { ConfigService } from '@nestjs/config';
+import { DeletePostDto } from './dto/delete.dto';
+import { ModifyPostDto } from './dto/modify.dto';
 
 @Injectable()
 export class CommunityService {
@@ -56,10 +58,33 @@ export class CommunityService {
     return await this.postRepository.save(postEntity);
   }
 
+  async deletePost(deletePostDto: DeletePostDto) {
+    const result = await this.postRepository.update(
+      { id : deletePostDto.postId },
+      { delYN : "Y" }
+    )
+    if (result && result.affected == 1) {
+      return { delete : "Y"}
+    } else {
+      return { delete : "N"}
+    }
+  }
+
+  async modifyPost(modifyPostDto: ModifyPostDto) {
+    const post = await this.postRepository.findOne({
+      where: { id: modifyPostDto.postId},
+    });
+    
+    Object.assign(post, modifyPostDto)
+    
+    const result = await this.postRepository.save(post);
+    return result;
+  }
+
   async getPosts(category: string) {
     return await this.postRepository.find({
       relations: ['user'], // 관계된 user 데이터를 조인
-      where: { category },
+      where: { category, delYN: 'N' },
       select: {
         id: true,
         title: true,
@@ -80,7 +105,7 @@ export class CommunityService {
   async getOnePost(id: number) {
     return await this.postRepository.findOne({
       relations: ['user'], // 관계된 user 데이터를 조인
-      where: { id },
+      where: { id, delYN: 'N'  },
       select: {
         id: true,
         title: true,
