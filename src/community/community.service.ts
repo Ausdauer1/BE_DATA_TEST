@@ -4,10 +4,13 @@ import { v4 as uuidv4 } from 'uuid'; // Unique ID 생성용
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { POST } from './entity/post.entity';
+import { LIKE } from './entity/like.entity';
+
 import { CreatePostDto } from './dto/post.dto';
 import { ConfigService } from '@nestjs/config';
 import { DeletePostDto } from './dto/delete.dto';
 import { ModifyPostDto } from './dto/modify.dto';
+import { LikeDto } from './dto/like.dto';
 
 @Injectable()
 export class CommunityService {
@@ -17,6 +20,8 @@ export class CommunityService {
   constructor(
     @InjectRepository(POST)
     private postRepository: Repository<POST>,
+    @InjectRepository(LIKE)
+    private likeRepository: Repository<LIKE>,
     private configService: ConfigService,
   ) {
     this.s3Client = new S3Client({
@@ -122,5 +127,20 @@ export class CommunityService {
         createdAt: 'DESC', // createdAt 기준으로 내림차순 정렬
       },
     });
+  }
+  
+  async addLike(likeDto: LikeDto) {
+    const likeEntity = this.likeRepository.create(likeDto)
+    const add = await this.likeRepository.save(likeEntity)
+  }
+
+  async getPostsWithLike() {
+    const posts = await this.postRepository
+    .createQueryBuilder('post')
+    .leftJoinAndSelect('post.like', 'like') // `likes`는 Post 엔티티에서의 관계명
+    .loadRelationCountAndMap('post.likeCount', 'post.like') // like 수를 매핑
+    .getMany();
+    return posts;
+
   }
 }

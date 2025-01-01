@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Query, Delete, Put } from '@nestjs/common';
+import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Query, Delete, Put, Param } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePostDto } from './dto/post.dto';
 import { DeletePostDto } from './dto/delete.dto';
 import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { ModifyPostDto } from './dto/modify.dto';
+import { LikeDto } from './dto/like.dto';
 
 @Controller('community')
 @ApiTags('게시판 API')
@@ -60,5 +61,16 @@ export class CommunityController {
   @ApiOperation({ summary: '게시물 조회 API (개별)' })
   async getOnePost(@Query('id') id: number) {
     return await this.communityService.getOnePost(id)
+  }
+
+  @Post('addLike')
+  @ApiOperation({ summary: '좋아요 추가 API' })
+  async addLike(@Body() likeDto: LikeDto) {
+    return await this.communityService.addLike(likeDto)
+  }
+
+  @Get('test')
+  async test() {
+    return await this.communityService.getPostsWithLike()
   }
 }

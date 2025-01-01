@@ -6,8 +6,10 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany
 } from 'typeorm';
 import { USER } from 'src/auth/entity/user.entity'; // 유저 엔티티 경로에 맞게 수정하세요.
+import { LIKE } from './like.entity';
 
 @Entity('post') // 테이블 이름
 export class POST {
@@ -41,4 +43,7 @@ export class POST {
 
   @UpdateDateColumn()
   updatedAt: Date; // 수정 시간
+
+  @OneToMany(() => LIKE, like => like.post)
+  like: LIKE[];
 }

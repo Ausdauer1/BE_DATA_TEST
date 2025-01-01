@@ -3,12 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScrapModule } from './scrap/scrap.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PLAYER_INFO } from './entity/playerInfo.entity';
-import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
-import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
-import { TOTAL_RECORD_BATTER } from './entity/totalRecordBatter.entity';
-import { TOTAL_RECORD_PITCHER } from './entity/totalRecordPitcher.entity';
-import { USER } from './auth/entity/user.entity';
 import { GetModule } from './get/get.module';
 import { AuthModule } from './auth/auth.module';
 import * as session from 'express-session';
@@ -16,9 +10,16 @@ import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
 import { CheckSessionMiddleware } from './session.middleware';
 import { CommunityModule } from './community/community.module';
-import { POST } from './community/entity/post.entity';
 import { ConfigModule } from "@nestjs/config";
 
+import { PLAYER_INFO } from './entity/playerInfo.entity';
+import { YEAR_RECORD_BATTER } from './entity/yearRecordBatter.entity';
+import { YEAR_RECORD_PITCHER } from './entity/yearRecordPitcher.entity';
+import { TOTAL_RECORD_BATTER } from './entity/totalRecordBatter.entity';
+import { TOTAL_RECORD_PITCHER } from './entity/totalRecordPitcher.entity';
+import { USER } from './auth/entity/user.entity';
+import { POST } from './community/entity/post.entity';
+import { LIKE } from './community/entity/like.entity';
 
 @Module({
   imports: [
@@ -29,8 +30,8 @@ import { ConfigModule } from "@nestjs/config";
       username: 'admin',
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
-      entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER, POST], 
-      synchronize: true 
+      entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER, POST, LIKE],
+      synchronize: true
     }), 
     ScrapModule, GetModule, AuthModule, CommunityModule, // 인증 모듈 (추가)
     ConfigModule.forRoot({
@@ -60,8 +61,9 @@ export class AppModule implements NestModule {
           resave: false,
           saveUninitialized: false,
           cookie: {
-            secure: false, // HTTPS 사용 시 true로 설정
+            secure: true, // HTTPS 사용 시 true로 설정
             httpOnly: true,
+            sameSite: 'none'
             // maxAge: 1000 * 60 * 5, // 1일
           },
         }),
@@ -73,7 +75,7 @@ export class AppModule implements NestModule {
     .forRoutes(
       { path: 'player/detail', method: RequestMethod.ALL },
       { path: 'player/search', method: RequestMethod.ALL },
-      { path: 'community/*', method: RequestMethod.POST}
+      // { path: 'community/*', method: RequestMethod.POST}
     ); // Apply CheckSessionMiddleware only to 'protected'
   }
 }
