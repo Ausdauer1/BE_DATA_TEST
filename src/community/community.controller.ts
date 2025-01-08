@@ -67,10 +67,10 @@ export class CommunityController {
     return await this.communityService.getOnePost(id)
   }
 
-  @Post('addLike')
+  @Post('likeDisNone')
   @ApiOperation({ summary: '좋아요 추가 API' })
-  async addLike(@Body() likeDto: LikeDto) {
-    return await this.communityService.addLike(likeDto)
+  async likeDisNone(@Body() likeDto: LikeDto) {
+    return await this.communityService.likeDisNone(likeDto)
   }
 
   @Get('test')
