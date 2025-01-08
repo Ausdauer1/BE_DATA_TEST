@@ -89,6 +89,7 @@ export class CommunityService {
   async getPosts(category: string, userId: number) {
     const query = this.postRepository
     .createQueryBuilder('post')
+    .leftJoinAndSelect('post.user', 'user')
     .leftJoinAndSelect('post.like', 'like') // `likes`는 Post 엔티티에서의 관계명
     .loadRelationCountAndMap('post.likeCount', 'post.like') // like 수를 매핑
     .where("post.delYN = 'N'")
@@ -101,6 +102,7 @@ export class CommunityService {
     const postsWithLikeStatus = await Promise.all(
       posts.map(async (post) => {
         const isMatch = post.like.some((item) => item.user_id === userId)
+        delete post.user.password
         return {
           ...post,
           isLiked: isMatch, // 좋아요 여부 (true/false)
