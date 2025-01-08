@@ -87,14 +87,17 @@ export class CommunityService {
   }
 
   async getPosts(category: string, userId: number) {
-    const posts = await this.postRepository
+    const query = this.postRepository
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.like', 'like') // `likes`는 Post 엔티티에서의 관계명
     .loadRelationCountAndMap('post.likeCount', 'post.like') // like 수를 매핑
-    .where("post.category = :category", { category })
-    .andWhere("post.delYN = 'N'")
-    .getMany();
+    .where("post.delYN = 'N'")
 
+    if (category !== undefined) {
+      query.andWhere("post.category = :category", { category });
+    }
+    const posts = await query.getMany();
+    
     const postsWithLikeStatus = await Promise.all(
       posts.map(async (post) => {
         const isMatch = post.like.some((item) => item.user_id === userId)
@@ -148,7 +151,10 @@ export class CommunityService {
     });
   }
   
-  async addLike(likeDto: LikeDto) {
+  async likeDisNone(likeDto: LikeDto) {
+    if (likeDto.type === "N") {
+      
+    }
     const likeEntity = this.likeRepository.create(likeDto)
     const add = await this.likeRepository.save(likeEntity)
   }
