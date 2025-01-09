@@ -11,7 +11,7 @@ export class LikeDto {
   @ApiProperty({ description: '유저 id' })
   user_id: number;
 
-  @IsString({ message: "좋아요 타입 입력해주세요"})
-  @ApiProperty({ description: '좋아요 타입 L-좋아요/D-싫어요/N-삭제' })
-  type: string
+  @IsString({ message: "업다운 입력해주세요"})
+  @ApiProperty({ description: '업-up, 다운-down' })
+  up_down: string
 }

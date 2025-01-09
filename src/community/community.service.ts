@@ -90,22 +90,37 @@ export class CommunityService {
     const query = this.postRepository
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')
-    .leftJoinAndSelect('post.like', 'like') // `likes`는 Post 엔티티에서의 관계명
-    .loadRelationCountAndMap('post.likeCount', 'post.like') // like 수를 매핑
+    .leftJoinAndSelect('post.like', 'like')
+    .loadRelationCountAndMap('post.likeCount', 'post.like')
     .where("post.delYN = 'N'")
+
+    // query.select([
+    //   'post.id',
+    //   'post.user_id',
+    //   'post.title',
+    //   'post.content',
+    //   'post.category',
+    //   'post.file_path',
+    //   'post.createdAt',
+    //   'post.updatedAt',
+    //   'user.id',
+    //   'user.nickname',
+    //   'like.user_id',
+    //   'like.type',
+    // ])
 
     if (category !== undefined) {
       query.andWhere("post.category = :category", { category });
     }
     const posts = await query.getMany();
-    
     const postsWithLikeStatus = await Promise.all(
       posts.map(async (post) => {
-        const isMatch = post.like.some((item) => item.user_id === userId)
+        const matchIndex = post.like.findIndex((item) => item.user_id === userId)
         delete post.user.password
+        const upDown = (matchIndex === -1) ? 'none' : post.like[matchIndex].up_down
         return {
           ...post,
-          isLiked: isMatch, // 좋아요 여부 (true/false)
+          isLiked: upDown, // 좋아요 여부 (true/false)
         };
       }),
     );
@@ -153,8 +168,10 @@ export class CommunityService {
     });
   }
   
-  async likeDisNone(likeDto: LikeDto) {
-    if (likeDto.type === "N") {
+  async upDownNone(likeDto: LikeDto) {
+    if (likeDto.up_down === "none") {
+      
+    } else {
       
     }
     const likeEntity = this.likeRepository.create(likeDto)

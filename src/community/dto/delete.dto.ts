@@ -6,4 +6,8 @@ export class DeletePostDto {
   @IsNumber({}, { message: "게시물 id를 입력해주세요"})
   @ApiProperty({ description: '게시물 id' })
   postId: number;
+
+  @IsNumber()
+  @ApiProperty({})
+  user_id:number
 }

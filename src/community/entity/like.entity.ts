@@ -21,8 +21,8 @@ export class LIKE {
   @Column("int")
   post_id: number;
 
-  @Column('varchar') // L/D
-  type: string;
+  @Column('varchar') // 
+  up_down: string;
 
   @CreateDateColumn()
   createdAt: Date;
