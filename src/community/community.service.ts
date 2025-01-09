@@ -12,6 +12,8 @@ import { DeletePostDto } from './dto/delete.dto';
 import { ModifyPostDto } from './dto/modify.dto';
 import { LikeDto } from './dto/like.dto';
 
+import { CommunityRepo } from './community.repository';
+
 @Injectable()
 export class CommunityService {
   private s3Client: S3Client;
@@ -23,6 +25,7 @@ export class CommunityService {
     @InjectRepository(LIKE)
     private likeRepository: Repository<LIKE>,
     private configService: ConfigService,
+    private communityRepo: CommunityRepo
   ) {
     this.s3Client = new S3Client({
       region: 'ap-northeast-2', 
@@ -91,7 +94,7 @@ export class CommunityService {
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')
     .leftJoinAndSelect('post.like', 'like')
-    .loadRelationCountAndMap('post.likeCount', 'post.like')
+    // .loadRelationCountAndMap('post.likeCount', 'post.like')
     .where("post.delYN = 'N'")
 
     // query.select([
@@ -116,11 +119,14 @@ export class CommunityService {
     const postsWithLikeStatus = await Promise.all(
       posts.map(async (post) => {
         const matchIndex = post.like.findIndex((item) => item.user_id === userId)
+        let plus = post.like.filter(el =>  el.up_down === "up").length
+        let minus = post.like.filter(el =>  el.up_down === "down").length
         delete post.user.password
         const upDown = (matchIndex === -1) ? 'none' : post.like[matchIndex].up_down
         return {
           ...post,
           isLiked: upDown, // 좋아요 여부 (true/false)
+          likeCount: plus - minus
         };
       }),
     );
@@ -169,13 +175,13 @@ export class CommunityService {
   }
   
   async upDownNone(likeDto: LikeDto) {
+    const clearUpDown = await this.communityRepo.deleteLike(likeDto.user_id, likeDto.post_id)
     if (likeDto.up_down === "none") {
-      
+      return clearUpDown
     } else {
-      
+      const likeEntity = this.likeRepository.create(likeDto)
+      return await this.likeRepository.save(likeEntity)
     }
-    const likeEntity = this.likeRepository.create(likeDto)
-    const add = await this.likeRepository.save(likeEntity)
   }
 
   async getPostsWithLike() {

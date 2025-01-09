@@ -12,7 +12,16 @@ export class CommunityRepo {
   ) {}
 
   async deleteLike(userId: number, postId: number) {
-    const add = this.likeRepository.create()
+    const result = await this.likeRepository.delete({
+      user_id: userId,
+      post_id: postId
+    })
+
+    if (result.affected && result.affected > 0) {
+      return { result: 'success' }
+    } else {
+      return { result: 'fail' }
+    }
   }
 
   async addLike(likeDto: LikeDto) {
