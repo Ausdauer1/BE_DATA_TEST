@@ -67,7 +67,7 @@ export class CommunityController {
     return await this.communityService.getOnePost(id)
   }
 
-  @Post('upDown')
+  @Post('updown')
   @ApiOperation({ summary: '좋아요 UP/DOWN/NONE API' })
   async upDownNone(@Body() likeDto: LikeDto) {
     return await this.communityService.upDownNone(likeDto)
