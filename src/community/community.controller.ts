@@ -54,11 +54,13 @@ export class CommunityController {
   @ApiOperation({ summary: '게시물 조회 API (전체)' })
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'userId', required: false })
+  @ApiQuery({ name: 'page', required: false })
   async getPosts(
     @Query('category') category: string, 
-    @Query('userId') userId: number,) 
-  {
-    return await this.communityService.getPosts(category, userId)
+    @Query('userId') userId: number,
+    @Query('page') page: number
+  ) {
+    return await this.communityService.getPosts(category, userId, page)
   }
 
   @Get('one')

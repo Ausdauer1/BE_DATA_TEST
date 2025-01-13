@@ -89,28 +89,16 @@ export class CommunityService {
     return result;
   }
 
-  async getPosts(category: string, userId: number) {
+  async getPosts(category: string, userId: number, page: number) {
     const query = this.postRepository
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')
     .leftJoinAndSelect('post.like', 'like')
     // .loadRelationCountAndMap('post.likeCount', 'post.like')
-    .where("post.delYN = 'N'")
-
-    // query.select([
-    //   'post.id',
-    //   'post.user_id',
-    //   'post.title',
-    //   'post.content',
-    //   'post.category',
-    //   'post.file_path',
-    //   'post.createdAt',
-    //   'post.updatedAt',
-    //   'user.id',
-    //   'user.nickname',
-    //   'like.user_id',
-    //   'like.type',
-    // ])
+    .where('post.delYN = "N"')
+    .orderBy('post.id', 'DESC')
+    .skip(10 * (page.toString() == 'NaN' ? 0 : page - 1)) // offset 적용
+    .take(10)  // limit 적용
 
     if (category !== undefined) {
       query.andWhere("post.category = :category", { category });
