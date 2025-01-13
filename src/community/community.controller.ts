@@ -65,8 +65,12 @@ export class CommunityController {
 
   @Get('one')
   @ApiOperation({ summary: '게시물 조회 API (개별)' })
-  async getOnePost(@Query('id') id: number) {
-    return await this.communityService.getOnePost(id)
+  @ApiQuery({ name: 'userId', required: false })
+  async getOnePost(
+    @Query('id') id: number,
+    @Query('userId') userId: number
+  ) {
+    return await this.communityService.getOnePost(id, userId)
   }
 
   @Post('updown')

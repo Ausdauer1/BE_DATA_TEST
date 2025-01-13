@@ -140,9 +140,9 @@ export class CommunityService {
     // });
   }
 
-  async getOnePost(id: number) {
-    return await this.postRepository.findOne({
-      relations: ['user'], // 관계된 user 데이터를 조인
+  async getOnePost(id: number, userId: number) {
+    const post = await this.postRepository.find({
+      relations: ['user', 'like'], // 관계된 user 데이터를 조인
       where: { id, delYN: 'N'  },
       select: {
         id: true,
@@ -155,11 +155,23 @@ export class CommunityService {
           id: true,
           nickname: true, // user에서 가져올 필드 선택
         },
+        like: {
+          user_id: true,
+          post_id: true,
+          up_down: true
+        }
       },
       order: {
         createdAt: 'DESC', // createdAt 기준으로 내림차순 정렬
       },
     });
+    const plus = post[0].like.filter(el =>  el.up_down === "up").length
+    const minus = post[0].like.filter(el =>  el.up_down === "down").length
+    const matchIndex = post[0].like.findIndex((item) => item.user_id === userId)
+    post[0]['likeCount'] = plus - minus
+    post[0]['isLiked'] = matchIndex === -1 ? 'none' : post[0].like[matchIndex].up_down
+
+    return post[0]
   }
   
   async upDownNone(likeDto: LikeDto) {
