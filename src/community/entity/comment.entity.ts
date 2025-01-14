@@ -9,32 +9,29 @@ import {
   OneToMany
 } from 'typeorm';
 import { USER } from 'src/auth/entity/user.entity'; // 유저 엔티티 경로에 맞게 수정하세요.
-import { LIKE } from './like.entity';
-import { COMMENT } from './comment.entity';
+import { POST } from './post.entity';
 
-@Entity('post') // 테이블 이름
-export class POST {
+@Entity('comment') // 테이블 이름
+export class COMMENT {
   @PrimaryGeneratedColumn()
   id: number; // 기본 키
 
   @Column("int")
   user_id: number;
 
-  @ManyToOne(() => USER, (user) => user.post ) // 유저와 조인
+  @ManyToOne(() => USER, (user) => user.comment ) // 유저와 조인
   @JoinColumn({ name: "user_id", referencedColumnName: "id"}) // 조인 컬럼 이름 지정
   user: USER;
 
-  @Column({ type: 'varchar', length: 255 })
-  title: string; // 제목
+  @Column("int")
+  post_id: number;
+
+  @ManyToOne(() => POST, (post) => post.comment) // 게시물 조인
+  @JoinColumn({ name: "post_id", referencedColumnName: "id"}) // 조인 컬럼 이름 지정
+  post: POST;
 
   @Column({ type: 'text' })
   content: string; // 내용
-
-  @Column({ type: 'varchar', length: 100 })
-  category: string; // 카테고리
-
-  @Column({ type: 'varchar', length: 500, nullable: true })
-  file_path: string; // 파일 저장 경로
 
   @Column({ type: 'char', default: "N"})
   delYN: string // 삭제여부
@@ -44,10 +41,4 @@ export class POST {
 
   @UpdateDateColumn()
   updatedAt: Date; // 수정 시간
-
-  @OneToMany(() => LIKE, like => like.post)
-  like: LIKE[];
-
-  @OneToMany(() => COMMENT, comment => comment.post)
-  comment: COMMENT[];
 }
