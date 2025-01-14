@@ -62,7 +62,7 @@ export class AppModule implements NestModule {
           resave: false,
           saveUninitialized: false,
           cookie: {
-            secure: true, // HTTPS 사용 시 true로 설정
+            secure: false, // HTTPS 사용 시 true로 설정
             httpOnly: false,
             sameSite: 'none'
             // maxAge: 1000 * 60 * 5, // 1일
