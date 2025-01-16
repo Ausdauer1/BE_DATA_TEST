@@ -99,6 +99,7 @@ export class AuthService {
       req.session.user = user.email;
       await req.session.save();
 
+    
       return {
         sid: req.sessionID,
         id: user.id,

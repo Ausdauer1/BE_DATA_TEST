@@ -10,7 +10,7 @@ export class CheckSessionMiddleware implements NestMiddleware {
   }
 
   async use(req: any, res: any, next: () => void) {
-    console.log(req.headers.cookie)
+    console.log(req.headers)
     if (req.session && req.session.user) {
       const sessionKey = `session:${req.sessionID}`;
       console.log('yayayayayayayayayayayayaay')

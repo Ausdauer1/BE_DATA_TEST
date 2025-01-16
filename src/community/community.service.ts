@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { DeletePostDto } from './dto/delete.dto';
 import { ModifyPostDto } from './dto/modify.dto';
 import { LikeDto } from './dto/like.dto';
+import { CreateCommentDto } from './dto/createComment.dto';
 
 import { CommunityRepo } from './community.repository';
 
@@ -120,24 +121,6 @@ export class CommunityService {
     );
 
     return postsWithLikeStatus;
-    // return await this.postRepository.find({
-    //   relations: ['user'], // 관계된 user 데이터를 조인
-    //   where: { category, delYN: 'N' },
-    //   select: {
-    //     id: true,
-    //     title: true,
-    //     content: true,
-    //     createdAt: true,
-    //     category: true,
-    //     user: {
-    //       id: true,
-    //       nickname: true, // user에서 가져올 필드 선택
-    //     },
-    //   },
-    //   order: {
-    //     createdAt: 'DESC', // createdAt 기준으로 내림차순 정렬
-    //   },
-    // });
   }
 
   async getOnePost(id: number, userId: number) {
@@ -184,12 +167,7 @@ export class CommunityService {
     }
   }
 
-  async getPostsWithLike() {
-    const posts = await this.postRepository
-    .createQueryBuilder('post')
-    .leftJoinAndSelect('post.like', 'like') // `likes`는 Post 엔티티에서의 관계명
-    .loadRelationCountAndMap('post.likeCount', 'post.like') // like 수를 매핑
-    .getMany();
-    return posts;
+  async createComment(createCommentDto: CreateCommentDto) {
+    
   }
 }

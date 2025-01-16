@@ -79,8 +79,4 @@ export class CommunityController {
     return await this.communityService.upDownNone(likeDto)
   }
 
-  @Get('test')
-  async test() {
-    return await this.communityService.getPostsWithLike()
-  }
 }
