@@ -21,6 +21,7 @@ import { USER } from './auth/entity/user.entity';
 import { POST } from './community/entity/post.entity';
 import { LIKE } from './community/entity/like.entity';
 import { COMMENT } from './community/entity/comment.entity';
+import { COMMENT_LIKE } from './community/entity/commentLike.entity';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { COMMENT } from './community/entity/comment.entity';
       username: 'admin',
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
-      entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER, POST, LIKE, COMMENT],
+      entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER, POST, LIKE, COMMENT, COMMENT_LIKE],
       synchronize: true
     }), 
     ScrapModule, GetModule, AuthModule, CommunityModule, // 인증 모듈 (추가)

@@ -1,11 +1,16 @@
 import { Body, Controller, Get, Post, UploadedFile, UseInterceptors, Query, Delete, Put, Param } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
+
 import { CreatePostDto } from './dto/post.dto';
 import { DeletePostDto } from './dto/delete.dto';
-import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { ModifyPostDto } from './dto/modify.dto';
 import { LikeDto } from './dto/like.dto';
+import { CreateCommentDto } from './dto/createComment.dto';
+import { ModifyCommentDto } from './dto/modifyComment.dto';
+import { DeleteCommentDto } from './dto/deleteComment.dto';
+
 
 @Controller('community')
 @ApiTags('게시판 API')
@@ -77,6 +82,30 @@ export class CommunityController {
   @ApiOperation({ summary: '좋아요 UP/DOWN/NONE API' })
   async upDownNone(@Body() likeDto: LikeDto) {
     return await this.communityService.upDownNone(likeDto)
+  }
+
+  @Post('updownComment')
+  @ApiOperation({ summary: '댓글 좋아요 UP/DOWN/NONE API' })
+  async upDownNoneComment(@Body() likeDto: LikeDto) {
+    return await this.communityService.upDownNone(likeDto)
+  }
+
+  @Post('createComment')
+  @ApiOperation({ summary: '댓글 생성 API' })
+  async createComment(@Body() createCommentDto: CreateCommentDto) {
+    return await this.communityService.createComment( createCommentDto)
+  }
+
+  @Put('modifyComment')
+  @ApiOperation({ summary: '댓글 수정 API' })
+  async modifyComment(@Body() modifyCommentDto: ModifyCommentDto) {
+    return await this.communityService.modifyComment(modifyCommentDto)
+  }
+
+  @Delete('deleteComment')
+  @ApiOperation({ summary: '댓글 삭제 API' })
+  async deleteComment(@Body() deleteCommentDto: DeleteCommentDto) {
+    return await this.communityService.deleteComment(deleteCommentDto)
   }
 
 }

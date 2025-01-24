@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { POST } from './entity/post.entity';
 import { LIKE } from './entity/like.entity';
+import { COMMENT } from './entity/comment.entity';
 
 import { CreatePostDto } from './dto/post.dto';
 import { ConfigService } from '@nestjs/config';
@@ -12,6 +13,8 @@ import { DeletePostDto } from './dto/delete.dto';
 import { ModifyPostDto } from './dto/modify.dto';
 import { LikeDto } from './dto/like.dto';
 import { CreateCommentDto } from './dto/createComment.dto';
+import { ModifyCommentDto } from './dto/modifyComment.dto';
+import { DeleteCommentDto } from './dto/deleteComment.dto';
 
 import { CommunityRepo } from './community.repository';
 
@@ -25,6 +28,8 @@ export class CommunityService {
     private postRepository: Repository<POST>,
     @InjectRepository(LIKE)
     private likeRepository: Repository<LIKE>,
+    @InjectRepository(COMMENT)
+    private commentRepository: Repository<COMMENT>,
     private configService: ConfigService,
     private communityRepo: CommunityRepo
   ) {
@@ -95,6 +100,7 @@ export class CommunityService {
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')
     .leftJoinAndSelect('post.like', 'like')
+    .loadRelationCountAndMap('post.commentCount', 'post.comment')
     // .loadRelationCountAndMap('post.likeCount', 'post.like')
     .where('post.delYN = "N"')
     .orderBy('post.id', 'DESC')
@@ -167,7 +173,41 @@ export class CommunityService {
     }
   }
 
+  async upDownNoneComment(likeDto: LikeDto) {
+    const clearUpDown = await this.communityRepo.deleteLike(likeDto.user_id, likeDto.post_id)
+    if (likeDto.up_down === "none") {
+      return clearUpDown
+    } else {
+      const likeEntity = this.likeRepository.create(likeDto)
+      return await this.likeRepository.save(likeEntity)
+    }
+  }
+
   async createComment(createCommentDto: CreateCommentDto) {
+    const commentEntity = this.commentRepository.create(createCommentDto);
+    return await this.commentRepository.save(commentEntity);
+  }
+
+  async modifyComment(modifyCommentDto: ModifyCommentDto) {
+    const post = await this.commentRepository.findOne({
+      where: { id: modifyCommentDto.commentId},
+    });
     
+    Object.assign(post, modifyCommentDto)
+    
+    const result = await this.commentRepository.save(post);
+    return result;
+  }
+
+  async deleteComment(deleteCommentDto: DeleteCommentDto) {
+    const result = await this.commentRepository.update(
+      { id : deleteCommentDto.commentId },
+      { delYN : "Y" }
+    )
+    if (result && result.affected == 1) {
+      return { delete : "Y"}
+    } else {
+      return { delete : "N"}
+    }
   }
 }

@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateCol
 import { POST } from "src/community/entity/post.entity";
 import { LIKE } from "src/community/entity/like.entity";
 import { COMMENT } from "src/community/entity/comment.entity";
+import { COMMENT_LIKE } from "src/community/entity/commentLike.entity";
 
 @Entity('USER')
 export class USER {
@@ -34,4 +35,7 @@ export class USER {
 
     @OneToMany(() => COMMENT, comment => comment.user)
     comment: COMMENT[];
+
+    @OneToMany(() => COMMENT_LIKE, commentLike => commentLike.user)
+    commentLike: COMMENT_LIKE[];
 }
