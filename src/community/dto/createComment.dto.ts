@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsNumberString } from 'class-validator';
+import { IsNumber, IsString, IsNumberString, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -14,4 +14,9 @@ export class CreateCommentDto {
   @IsString({ message: '내용은 문자열로 작성하여주세요' })
   @ApiProperty({ description: '내용' })
   content: string;
+
+  @IsNumber({}, { message: '부모 댓글이 있다면 id를 입력'})
+  @IsOptional()
+  @ApiProperty({ description: '부모 댓글 id'})
+  parent_id: number;
 }

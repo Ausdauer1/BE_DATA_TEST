@@ -46,6 +46,9 @@ export class COMMENT {
   @UpdateDateColumn()
   updatedAt: Date; // 수정 시간
 
+  @Column("int", {default: 0})
+  depth: number;
+
   @OneToMany(() => COMMENT_LIKE, commentLike => commentLike.comment)
   commentLike: COMMENT_LIKE[]
 }
