@@ -130,37 +130,98 @@ export class CommunityService {
   }
 
   async getOnePost(id: number, userId: number) {
-    const post = await this.postRepository.find({
-      relations: ['user', 'like'], // 관계된 user 데이터를 조인
-      where: { id, delYN: 'N'  },
-      select: {
-        id: true,
-        title: true,
-        content: true,
-        category: true,
-        createdAt: true,
-        updatedAt: true,
-        user: {
-          id: true,
-          nickname: true, // user에서 가져올 필드 선택
-        },
-        like: {
-          user_id: true,
-          post_id: true,
-          up_down: true
-        }
-      },
-      order: {
-        createdAt: 'DESC', // createdAt 기준으로 내림차순 정렬
-      },
-    });
-    const plus = post[0].like.filter(el =>  el.up_down === "up").length
-    const minus = post[0].like.filter(el =>  el.up_down === "down").length
-    const matchIndex = post[0].like.findIndex((item) => item.user_id === userId)
-    post[0]['likeCount'] = plus - minus
-    post[0]['isLiked'] = matchIndex === -1 ? 'none' : post[0].like[matchIndex].up_down
+    const post = await this.postRepository.createQueryBuilder('post')
+      .leftJoinAndSelect('post.user', 'user')
+      .leftJoinAndSelect('post.like', 'like')
+      .leftJoinAndSelect('post.comment', 'comment')
+      .leftJoinAndSelect('comment.commentLike', 'commentLike')
+      .select([
+        'post.id',
+        'post.title',
+        'post.content',
+        'post.category',
+        'post.createdAt',
+        'post.updatedAt',
+        'user.id',
+        'user.nickname',
+        'user.email',
+        'like.id',
+        'like.user_id',
+        'like.post_id',
+        'like.up_down',
+        'comment.id',
+        'comment.user_id',
+        'comment.post_id',
+        'comment.content',
+        'comment.depth',
+        'comment.parent_id',
+        'commentLike.comment_id',
+        'commentLike.user_id',
+        'commentLike.id',
+        'commentLike.up_down',
+      ])
+      .where("post.id = :id", { id })
+      .orderBy('comment.depth', 'ASC')
+      .getOne()
+    // 필요한 컬럼만 선택
+    // const post = await this.postRepository.find({
+    //   relations: ['user', 'like'], // 관계된 user 데이터를 조인
+    //   where: { id, delYN: 'N'  },
+    //   select: {
+    //     id: true,
+    //     title: true,
+    //     content: true,
+    //     category: true,
+    //     createdAt: true,
+    //     updatedAt: true,
+    //     user: {
+    //       id: true,
+    //       nickname: true, // user에서 가져올 필드 선택
+    //     },
+    //     like: {
+    //       user_id: true,
+    //       post_id: true,
+    //       up_down: true
+    //     }
+    //   },
+    //   order: {
+    //     createdAt: 'DESC', // createdAt 기준으로 내림차순 정렬
+    //   },
+    // });
+    // console.log(post)
+    const comments = post.comment
 
-    return post[0]
+    const commentMap = new Map();
+    const rootComments: any[] = [];
+
+    comments.forEach((comment) => {
+      comment['children'] = []; // 댓글 객체에 children 속성 추가
+      commentMap.set(comment.id, comment); // 댓글 ID를 key로, 댓글 객체를 value로 저장
+      // console.log(commentMap)
+      const plus = comment.commentLike.filter(el =>  el.up_down === "up").length
+      const minus = comment.commentLike.filter(el =>  el.up_down === "down").length
+      const matchIndex = comment.commentLike.findIndex((item) => item.user_id === userId)
+      comment['likeCount'] = plus - minus
+      comment['isLiked'] = matchIndex === -1 ? 'none' : comment.commentLike[matchIndex].up_down
+
+      if (comment.parent_id) { // 부모 댓글이 있는 경우
+        const parent = commentMap.get(comment.parent_id); // 부모 댓글 찾기
+        if (parent) {
+          parent.children.push(comment); // 부모 댓글의 children 배열에 추가
+        }
+      } else {
+        rootComments.push(comment); // 최상위 댓글이면 rootComments에 추가
+      }
+    });
+
+    post.comment = rootComments
+    const plus = post.like.filter(el =>  el.up_down === "up").length
+    const minus = post.like.filter(el =>  el.up_down === "down").length
+    const matchIndex = post.like.findIndex((item) => item.user_id === userId)
+    post['likeCount'] = plus - minus
+    post['isLiked'] = matchIndex === -1 ? 'none' : post.like[matchIndex].up_down
+
+    return post
   }
   
   async upDownNone(likeDto: LikeDto) {
