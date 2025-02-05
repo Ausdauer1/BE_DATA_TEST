@@ -100,7 +100,15 @@ export class CommunityService {
     .createQueryBuilder('post')
     .leftJoinAndSelect('post.user', 'user')
     .leftJoinAndSelect('post.like', 'like')
-    .loadRelationCountAndMap('post.commentCount', 'post.comment')
+    .loadRelationCountAndMap(
+      'post.commentCount',
+      'post.comment',
+      'comment',
+      (qb) => {
+        return qb.where('comment.delYN = :delYN', { delYN: 'N' }); // 예: 삭제되지 않은 댓글만 카운트
+      }
+    )
+    
     // .loadRelationCountAndMap('post.likeCount', 'post.like')
     .where('post.delYN = "N"')
     .orderBy('post.id', 'DESC')
@@ -155,12 +163,14 @@ export class CommunityService {
         'comment.content',
         'comment.depth',
         'comment.parent_id',
+        'comment.delYN',
         'commentLike.comment_id',
         'commentLike.user_id',
         'commentLike.id',
         'commentLike.up_down',
       ])
       .where("post.id = :id", { id })
+      .andWhere('post.delYN = "N"')
       .orderBy('comment.depth', 'ASC')
       .getOne()
     // 필요한 컬럼만 선택
@@ -203,14 +213,16 @@ export class CommunityService {
       const matchIndex = comment.commentLike.findIndex((item) => item.user_id === userId)
       comment['likeCount'] = plus - minus
       comment['isLiked'] = matchIndex === -1 ? 'none' : comment.commentLike[matchIndex].up_down
-
-      if (comment.parent_id) { // 부모 댓글이 있는 경우
-        const parent = commentMap.get(comment.parent_id); // 부모 댓글 찾기
-        if (parent) {
-          parent.children.push(comment); // 부모 댓글의 children 배열에 추가
+      console.log(comment.delYN)
+      if (comment.delYN === "N") {
+        if (comment.parent_id) { // 부모 댓글이 있는 경우
+          const parent = commentMap.get(comment.parent_id); // 부모 댓글 찾기
+          if (parent) {
+            parent.children.push(comment); // 부모 댓글의 children 배열에 추가
+          }
+        } else {
+          rootComments.push(comment); // 최상위 댓글이면 rootComments에 추가
         }
-      } else {
-        rootComments.push(comment); // 최상위 댓글이면 rootComments에 추가
       }
     });
 
@@ -245,13 +257,24 @@ export class CommunityService {
   }
 
   async createComment(createCommentDto: CreateCommentDto) {
+    if (createCommentDto.parent_id) {
+      const parentComment = await this.commentRepository.findOne({
+        where: {
+          id: createCommentDto.parent_id
+        },
+      });
+      createCommentDto["depth"] = parentComment.depth + 1
+    }
     const commentEntity = this.commentRepository.create(createCommentDto);
     return await this.commentRepository.save(commentEntity);
+    
   }
 
   async modifyComment(modifyCommentDto: ModifyCommentDto) {
     const post = await this.commentRepository.findOne({
-      where: { id: modifyCommentDto.commentId},
+      where: { 
+        id: modifyCommentDto.commentId
+      },
     });
     
     Object.assign(post, modifyCommentDto)
@@ -261,11 +284,17 @@ export class CommunityService {
   }
 
   async deleteComment(deleteCommentDto: DeleteCommentDto) {
-    const result = await this.commentRepository.update(
-      { id : deleteCommentDto.commentId },
-      { delYN : "Y" }
-    )
-    if (result && result.affected == 1) {
+    const result = await this.commentRepository
+      .createQueryBuilder()
+      .update(COMMENT)
+      .set({ delYN: "Y" })
+      .where("id = :commentId", { commentId: deleteCommentDto.commentId })
+      .orWhere("parent_id = :commentId", { commentId: deleteCommentDto.commentId })
+      .andWhere("delYN = :delYN", { delYN: "N" }) // 삭제되지 않은 댓글만 업데이트
+      .execute();
+
+    console.log(result)
+    if (result && result.affected !== 0) {
       return { delete : "Y"}
     } else {
       return { delete : "N"}
