@@ -1,6 +1,8 @@
 import { Injectable, InternalServerErrorException, BadRequestException } from '@nestjs/common';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { v4 as uuidv4 } from 'uuid'; // Unique ID 생성용
+import { ConfigService } from '@nestjs/config';
+
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { POST } from './entity/post.entity';
@@ -8,15 +10,17 @@ import { LIKE } from './entity/like.entity';
 import { COMMENT } from './entity/comment.entity';
 
 import { CreatePostDto } from './dto/post.dto';
-import { ConfigService } from '@nestjs/config';
 import { DeletePostDto } from './dto/delete.dto';
 import { ModifyPostDto } from './dto/modify.dto';
 import { LikeDto } from './dto/like.dto';
+
 import { CreateCommentDto } from './dto/createComment.dto';
 import { ModifyCommentDto } from './dto/modifyComment.dto';
 import { DeleteCommentDto } from './dto/deleteComment.dto';
+import { CommentLikeDto } from './dto/commentLike.dto';
 
 import { CommunityRepo } from './community.repository';
+import { COMMENT_LIKE } from './entity/commentLike.entity';
 
 @Injectable()
 export class CommunityService {
@@ -30,6 +34,9 @@ export class CommunityService {
     private likeRepository: Repository<LIKE>,
     @InjectRepository(COMMENT)
     private commentRepository: Repository<COMMENT>,
+    @InjectRepository(COMMENT_LIKE)
+    private commentLikeRepository: Repository<COMMENT_LIKE>,
+
     private configService: ConfigService,
     private communityRepo: CommunityRepo
   ) {
@@ -72,6 +79,17 @@ export class CommunityService {
     return await this.postRepository.save(postEntity);
   }
 
+  async modifyPost(modifyPostDto: ModifyPostDto) {
+    const post = await this.postRepository.findOne({
+      where: { id: modifyPostDto.postId},
+    });
+    
+    Object.assign(post, modifyPostDto)
+    
+    const result = await this.postRepository.save(post);
+    return result;
+  }
+
   async deletePost(deletePostDto: DeletePostDto) {
     const result = await this.postRepository.update(
       { id : deletePostDto.postId },
@@ -82,17 +100,6 @@ export class CommunityService {
     } else {
       return { delete : "N"}
     }
-  }
-
-  async modifyPost(modifyPostDto: ModifyPostDto) {
-    const post = await this.postRepository.findOne({
-      where: { id: modifyPostDto.postId},
-    });
-    
-    Object.assign(post, modifyPostDto)
-    
-    const result = await this.postRepository.save(post);
-    return result;
   }
 
   async getPosts(category: string, userId: number, page: number) {
@@ -250,15 +257,7 @@ export class CommunityService {
     }
   }
 
-  async upDownNoneComment(likeDto: LikeDto) {
-    const clearUpDown = await this.communityRepo.deleteLike(likeDto.user_id, likeDto.post_id)
-    if (likeDto.up_down === "none") {
-      return clearUpDown
-    } else {
-      const likeEntity = this.likeRepository.create(likeDto)
-      return await this.likeRepository.save(likeEntity)
-    }
-  }
+  
 
   async createComment(createCommentDto: CreateCommentDto) {
     if (createCommentDto.parent_id) {
@@ -297,11 +296,20 @@ export class CommunityService {
       .andWhere("delYN = :delYN", { delYN: "N" }) // 삭제되지 않은 댓글만 업데이트
       .execute();
 
-    console.log(result)
     if (result && result.affected !== 0) {
       return { delete : "Y"}
     } else {
       return { delete : "N"}
+    }
+  }
+
+  async upDownNoneComment(commentlikeDto: CommentLikeDto) {
+    const clearUpDown = await this.communityRepo.deleteCommentLike(commentlikeDto.user_id, commentlikeDto.comment_id)
+    if (commentlikeDto.up_down === "none") {
+      return clearUpDown
+    } else {
+      const likeEntity = this.commentLikeRepository.create(commentlikeDto)
+      return await this.commentLikeRepository.save(likeEntity)
     }
   }
 }

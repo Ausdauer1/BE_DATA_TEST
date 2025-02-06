@@ -7,6 +7,7 @@ import { CreatePostDto } from './dto/post.dto';
 import { DeletePostDto } from './dto/delete.dto';
 import { ModifyPostDto } from './dto/modify.dto';
 import { LikeDto } from './dto/like.dto';
+import { CommentLikeDto } from './dto/commentLike.dto';
 import { CreateCommentDto } from './dto/createComment.dto';
 import { ModifyCommentDto } from './dto/modifyComment.dto';
 import { DeleteCommentDto } from './dto/deleteComment.dto';
@@ -86,8 +87,8 @@ export class CommunityController {
 
   @Post('updownComment')
   @ApiOperation({ summary: '댓글 좋아요 UP/DOWN/NONE API' })
-  async upDownNoneComment(@Body() likeDto: LikeDto) {
-    return await this.communityService.upDownNone(likeDto)
+  async upDownNoneComment(@Body() commentlikeDto: CommentLikeDto) {
+    return await this.communityService.upDownNoneComment(commentlikeDto)
   }
 
   @Post('createComment')

@@ -2,10 +2,10 @@ import { IsNumber, IsString, IsNumberString, IsOptional } from 'class-validator'
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LikeDto {
-  @IsNumber({}, { message: "게시물 id를 입력해주세요"})
-  @ApiProperty({ description: '게시물 id' })
-  post_id: number;
+export class CommentLikeDto {
+  @IsNumber({}, { message: "코멘트 id를 입력해주세요"})
+  @ApiProperty({ description: '코멘트 id' })
+  comment_id: number;
 
   @IsNumber({}, { message: "유저 id를 입력해주세요"})
   @ApiProperty({ description: '유저 id' })
