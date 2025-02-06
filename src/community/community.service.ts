@@ -142,6 +142,7 @@ export class CommunityService {
       .leftJoinAndSelect('post.user', 'user')
       .leftJoinAndSelect('post.like', 'like')
       .leftJoinAndSelect('post.comment', 'comment')
+      .leftJoinAndSelect('comment.user', 'commentUser')
       .leftJoinAndSelect('comment.commentLike', 'commentLike')
       .select([
         'post.id',
@@ -164,6 +165,9 @@ export class CommunityService {
         'comment.depth',
         'comment.parent_id',
         'comment.delYN',
+        'comment.createdAt',
+        'comment.updatedAt',
+        'commentUser.nickname',
         'commentLike.comment_id',
         'commentLike.user_id',
         'commentLike.id',
@@ -213,7 +217,7 @@ export class CommunityService {
       const matchIndex = comment.commentLike.findIndex((item) => item.user_id === userId)
       comment['likeCount'] = plus - minus
       comment['isLiked'] = matchIndex === -1 ? 'none' : comment.commentLike[matchIndex].up_down
-      console.log(comment.delYN)
+      
       if (comment.delYN === "N") {
         if (comment.parent_id) { // 부모 댓글이 있는 경우
           const parent = commentMap.get(comment.parent_id); // 부모 댓글 찾기
