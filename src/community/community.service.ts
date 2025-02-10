@@ -115,8 +115,6 @@ export class CommunityService {
         return qb.where('comment.delYN = :delYN', { delYN: 'N' }); // 예: 삭제되지 않은 댓글만 카운트
       }
     )
-    
-    // .loadRelationCountAndMap('post.likeCount', 'post.like')
     .where('post.delYN = "N"')
     .orderBy('post.id', 'DESC')
     .skip(10 * (page.toString() == 'NaN' ? 0 : page - 1)) // offset 적용
@@ -152,80 +150,34 @@ export class CommunityService {
       .leftJoinAndSelect('comment.user', 'commentUser')
       .leftJoinAndSelect('comment.commentLike', 'commentLike')
       .select([
-        'post.id',
-        'post.title',
-        'post.content',
-        'post.category',
-        'post.createdAt',
-        'post.updatedAt',
-        'user.id',
-        'user.nickname',
-        'user.email',
-        'like.id',
-        'like.user_id',
-        'like.post_id',
-        'like.up_down',
-        'comment.id',
-        'comment.user_id',
-        'comment.post_id',
-        'comment.content',
-        'comment.depth',
-        'comment.parent_id',
-        'comment.delYN',
-        'comment.createdAt',
-        'comment.updatedAt',
+        'post.id', 'post.title', 'post.content', 'post.category', 'post.createdAt', 'post.updatedAt',
+        'user.id', 'user.nickname', 'user.email',
+        'like.id', 'like.user_id', 'like.post_id', 'like.up_down',
+        'comment.id', 'comment.user_id', 'comment.post_id', 'comment.content', 'comment.depth', 
+        'comment.parent_id', 'comment.delYN', 'comment.createdAt', 'comment.updatedAt', 
         'commentUser.nickname',
-        'commentLike.comment_id',
-        'commentLike.user_id',
-        'commentLike.id',
-        'commentLike.up_down',
-      ])
+        'commentLike.comment_id', 'commentLike.user_id', 'commentLike.id', 'commentLike.up_down'
+      ])      
       .where("post.id = :id", { id })
       .andWhere('post.delYN = "N"')
       .orderBy('comment.depth', 'ASC')
       .getOne()
-    // 필요한 컬럼만 선택
-    // const post = await this.postRepository.find({
-    //   relations: ['user', 'like'], // 관계된 user 데이터를 조인
-    //   where: { id, delYN: 'N'  },
-    //   select: {
-    //     id: true,
-    //     title: true,
-    //     content: true,
-    //     category: true,
-    //     createdAt: true,
-    //     updatedAt: true,
-    //     user: {
-    //       id: true,
-    //       nickname: true, // user에서 가져올 필드 선택
-    //     },
-    //     like: {
-    //       user_id: true,
-    //       post_id: true,
-    //       up_down: true
-    //     }
-    //   },
-    //   order: {
-    //     createdAt: 'DESC', // createdAt 기준으로 내림차순 정렬
-    //   },
-    // });
-    // console.log(post)
+  
     const comments = post.comment
-
     const commentMap = new Map();
     const rootComments: any[] = [];
 
     comments.forEach((comment) => {
-      comment['children'] = []; // 댓글 객체에 children 속성 추가
-      commentMap.set(comment.id, comment); // 댓글 ID를 key로, 댓글 객체를 value로 저장
-      // console.log(commentMap)
-      const plus = comment.commentLike.filter(el =>  el.up_down === "up").length
-      const minus = comment.commentLike.filter(el =>  el.up_down === "down").length
-      const matchIndex = comment.commentLike.findIndex((item) => item.user_id === userId)
-      comment['likeCount'] = plus - minus
-      comment['isLiked'] = matchIndex === -1 ? 'none' : comment.commentLike[matchIndex].up_down
-      
       if (comment.delYN === "N") {
+
+        const plus = comment.commentLike.filter(el =>  el.up_down === "up").length
+        const minus = comment.commentLike.filter(el =>  el.up_down === "down").length
+        const matchIndex = comment.commentLike.findIndex((item) => item.user_id === userId)
+        comment['likeCount'] = plus - minus
+        comment['isLiked'] = matchIndex === -1 ? 'none' : comment.commentLike[matchIndex].up_down
+
+        comment['children'] = []; // 댓글 객체에 children 속성 추가
+        commentMap.set(comment.id, comment); // 댓글 ID를 key로, 댓글 객체를 value로 저장
         if (comment.parent_id) { // 부모 댓글이 있는 경우
           const parent = commentMap.get(comment.parent_id); // 부모 댓글 찾기
           if (parent) {
@@ -236,8 +188,8 @@ export class CommunityService {
         }
       }
     });
-
     post.comment = rootComments
+
     const plus = post.like.filter(el =>  el.up_down === "up").length
     const minus = post.like.filter(el =>  el.up_down === "down").length
     const matchIndex = post.like.findIndex((item) => item.user_id === userId)
@@ -269,8 +221,15 @@ export class CommunityService {
       createCommentDto["depth"] = parentComment.depth + 1
     }
     const commentEntity = this.commentRepository.create(createCommentDto);
-    return await this.commentRepository.save(commentEntity);
+    // return await this.commentRepository.save(commentEntity);
     
+    const savedComment = await this.commentRepository.save(commentEntity);
+    const commentWithUser = await this.commentRepository.findOne({
+      where: { id: savedComment.id },
+      relations: ['user'], // user 테이블 조인
+    });
+    delete commentWithUser.user.password
+    return commentWithUser;
   }
 
   async modifyComment(modifyCommentDto: ModifyCommentDto) {
