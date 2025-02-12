@@ -109,4 +109,14 @@ export class CommunityController {
     return await this.communityService.deleteComment(deleteCommentDto)
   }
 
+  @Get('sortComment')
+  @ApiOperation({ summary: '코멘트 정렬 API' })
+  @ApiQuery({ name: 'userId', required: false })
+  async sortComment(
+    @Query('method') method: string,
+    @Query('postId') postId: number,
+    @Query('userId') userId: number
+  ) {
+    return await this.communityService.sortComment(postId, method, userId)
+  }
 }

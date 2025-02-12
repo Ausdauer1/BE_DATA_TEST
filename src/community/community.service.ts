@@ -21,6 +21,7 @@ import { CommentLikeDto } from './dto/commentLike.dto';
 
 import { CommunityRepo } from './community.repository';
 import { COMMENT_LIKE } from './entity/commentLike.entity';
+import { root } from 'cheerio/lib/static';
 
 @Injectable()
 export class CommunityService {
@@ -188,6 +189,9 @@ export class CommunityService {
         }
       }
     });
+    rootComments.sort((a,b) => {
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    }) 
     post.comment = rootComments
 
     const plus = post.like.filter(el =>  el.up_down === "up").length
@@ -269,6 +273,61 @@ export class CommunityService {
     } else {
       const likeEntity = this.commentLikeRepository.create(commentlikeDto)
       return await this.commentLikeRepository.save(likeEntity)
+        
     }
   }
-}
+
+  async sortComment(postId: number, method: string, userId: number) {
+    const comments = await this.commentRepository.createQueryBuilder('comment')
+    .leftJoinAndSelect('comment.user', 'commentUser')
+    .leftJoinAndSelect('comment.commentLike', 'commentLike')
+    .select([
+      'comment.id', 'comment.user_id', 'comment.post_id', 'comment.content', 'comment.depth', 
+      'comment.parent_id', 'comment.delYN', 'comment.createdAt', 'comment.updatedAt', 
+      'commentUser.nickname',
+      'commentLike.comment_id', 'commentLike.user_id', 'commentLike.id', 'commentLike.up_down'
+    ])
+    .where("comment.post_id = :id", { id: postId })
+    .andWhere('comment.delYN = "N"')
+    .orderBy('comment.depth', 'ASC')
+    .getMany();
+    // console.log(comments)
+    const commentMap = new Map();
+    const rootComments: COMMENT[] = [];
+    comments.forEach((comment) => {
+
+      const plus = comment.commentLike.filter(el =>  el.up_down === "up").length
+      const minus = comment.commentLike.filter(el =>  el.up_down === "down").length
+      const matchIndex = comment.commentLike.findIndex((item) => item.user_id === userId)
+      comment['likeCount'] = plus - minus
+      comment['isLiked'] = matchIndex === -1 ? 'none' : comment.commentLike[matchIndex].up_down
+      comment['children'] = []; // 댓글 객체에 children 속성 추가
+      commentMap.set(comment.id, comment); // 댓글 ID를 key로, 댓글 객체를 value로 저장
+      if (comment.parent_id) { // 부모 댓글이 있는 경우
+        const parent = commentMap.get(comment.parent_id); // 부모 댓글 찾기
+        if (parent) {
+          parent.children.push(comment); // 부모 댓글의 children 배열에 추가
+        }
+      } else {
+        rootComments.push(comment); // 최상위 댓글이면 rootComments에 추가
+      }
+    });
+
+    
+    let result = rootComments.sort((a,b) => {
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    }) 
+    if (method === 'like') {
+      result = rootComments.sort((a,b) => {
+        return b['likeCount'] - a['likeCount']
+      })
+    } 
+    if (method === 'reply') {
+      result = rootComments.sort((a,b) => {
+        return b['children'].length - a['children'].length
+      })
+    }
+    return result
+  }
+
+} // end of file
