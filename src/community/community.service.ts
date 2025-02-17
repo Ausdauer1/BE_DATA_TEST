@@ -118,12 +118,14 @@ export class CommunityService {
     )
     .where('post.delYN = "N"')
     .orderBy('post.id', 'DESC')
-    .skip(10 * (page.toString() == 'NaN' ? 0 : page - 1)) // offset 적용
-    .take(10)  // limit 적용
+    .skip(5 * (page.toString() == 'NaN' ? 0 : page - 1)) // offset 적용
+    .take(5)  // limit 적용
 
     if (category !== undefined) {
       query.andWhere("post.category = :category", { category });
     }
+    // console.log("Generated SQL:", query.getSql());
+    // console.log("Query with parameters:", query.getQueryAndParameters());
     const posts = await query.getMany();
     const postsWithLikeStatus = await Promise.all(
       posts.map(async (post) => {

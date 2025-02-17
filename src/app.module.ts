@@ -33,7 +33,8 @@ import { COMMENT_LIKE } from './community/entity/commentLike.entity';
       password: 'Z7o8mvHsXg6wupgFNHw7',
       database: 'bnn_db',
       entities: [__dirname + '/entity/*.entity{.ts}', PLAYER_INFO, YEAR_RECORD_BATTER, YEAR_RECORD_PITCHER, TOTAL_RECORD_BATTER, TOTAL_RECORD_PITCHER, USER, POST, LIKE, COMMENT, COMMENT_LIKE],
-      synchronize: true
+      synchronize: true,
+      // logging: true, // SQL 로그 활성화
     }), 
     ScrapModule, GetModule, AuthModule, CommunityModule, // 인증 모듈 (추가)
     ConfigModule.forRoot({
