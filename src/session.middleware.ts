@@ -12,7 +12,7 @@ export class CheckSessionMiddleware implements NestMiddleware {
   async use(req: any, res: any, next: () => void) {
     console.log(req.headers)
     if (req.session && req.session.user) {
-      const sessionKey = `session:${req.sessionID}`;
+      const sessionKey = `session:${req.session.id}`;
       console.log('yayayayayayayayayayayayaay')
       console.log(req.session.user)
       const ttl = await this.redisClient.TTL(sessionKey); // Get session TTL

@@ -76,8 +76,8 @@ export class AppModule implements NestModule {
     consumer
     .apply(CheckSessionMiddleware)
     .forRoutes(
-      { path: 'player/detail', method: RequestMethod.ALL },
-      { path: 'player/search', method: RequestMethod.ALL },
+      // { path: 'player/detail', method: RequestMethod.ALL },
+      // { path: 'player/search', method: RequestMethod.ALL },
       // { path: 'community/*', method: RequestMethod.POST}
     ); // Apply CheckSessionMiddleware only to 'protected'
   }

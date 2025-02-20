@@ -97,11 +97,12 @@ export class AuthService {
       await Promise.all(deleteLoggedInUser);
 
       req.session.user = user.email;
+      console.log(req.session.id)
       await req.session.save();
 
     
       return {
-        sid: req.sessionID,
+        sid: req.session.id,
         id: user.id,
         email: user.email,
         nickname: user.nickname,
