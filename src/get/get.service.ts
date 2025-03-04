@@ -25,7 +25,7 @@ export class GetService {
             .leftJoinAndSelect('pi.trbs', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position', 'pi.image_url',
                 'b.year', 'b.team', 'b.age', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
                 'b.PA', 'b.ePA', 'b.AB', 'b.R', 'b.H',
                 'b.2B', 'b.3B', 'b.HR', 'b.TB', 'b.RBI',
@@ -48,7 +48,7 @@ export class GetService {
             .leftJoinAndSelect('pi.trps', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position', 'pi.image_url',
                 'p.year', 'p.team', 'p.age', 'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
                 'p.GR', 'p.GF', 'p.CG', 'p.SHO', 'p.W',
                 'p.L', 'p.S', 'p.HD', 'p.IP', 'p.ER',
@@ -121,7 +121,7 @@ export class GetService {
             .leftJoinAndSelect('pi.trbs', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position', 'pi.image_url',
                 'b.year', 'b.team', 'b.age', 'b.WAR', 'b.oWAR', 'b.dWAR', 'b.AVG', 'b.G',
                 'b.PA', 'b.ePA', 'b.AB', 'b.R', 'b.H',
                 'b.2B', 'b.3B', 'b.HR', 'b.TB', 'b.RBI',
@@ -144,7 +144,7 @@ export class GetService {
             .leftJoinAndSelect('pi.trps', 't')
             .select([
                 'pi.back_number', 'pi.name', 'pi.team', 'pi.detail_position', 'pi.id',
-                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position',
+                'pi.birth_date', 'pi.height', 'pi.weight', 'pi.career', 'pi.position', 'pi.image_url',
                 'p.year', 'p.team', 'p.age', 'p.WAR', 'p.ERA', 'p.WHIP', 'p.G', 'p.GS',
                 'p.GR', 'p.GF', 'p.CG', 'p.SHO', 'p.W',
                 'p.L', 'p.S', 'p.HD', 'p.IP', 'p.ER',
@@ -226,7 +226,7 @@ export class GetService {
         const batter = await this.playerInfoRepository.createQueryBuilder('pi')
         .leftJoinAndSelect('pi.yrbs', 'b')
         .select([
-            'pi.id AS id', 'pi.back_number AS back_number', 'pi.name AS name', 'pi.team AS team', 'pi.detail_position AS detail_position',
+            'pi.id AS id', 'pi.back_number AS back_number', 'pi.name AS name', 'pi.team AS team', 'pi.detail_position AS detail_position', 'pi.image_url AS image_url',
             'b.year AS year', 'b.WAR AS WAR', 'b.oWAR AS oWAR', 'b.dWAR AS dWAR', 'b.AVG AS AVG', 'b.G AS G',
             'b.PA AS PA', 'b.ePA AS ePA', 'b.AB AS AB', 'b.R AS R', 'b.H AS H',
             'b.2B AS 2B', 'b.3B AS 3B', 'b.HR AS HR', 'b.TB AS TB', 'b.RBI AS RBI',
@@ -246,7 +246,7 @@ export class GetService {
         const pitcher = await this.playerInfoRepository.createQueryBuilder('pi')
         .leftJoinAndSelect('pi.yrps', 'p')
         .select([
-            'pi.id AS id', 'pi.back_number AS back_number', 'pi.name AS name', 'pi.team AS team', 'pi.detail_position AS detail_position',
+            'pi.id AS id', 'pi.back_number AS back_number', 'pi.name AS name', 'pi.team AS team', 'pi.detail_position AS detail_position', 'pi.image_url AS image_url',
             'p.WAR AS WAR', 'p.ERA AS ERA', 'p.WHIP AS WHIP', 'p.G AS G', 'p.GS AS GS',
             'p.GR AS GR', 'p.GF AS GF', 'p.CG AS CG', 'p.SHO AS SHO', 'p.W AS W',
             'p.L AS L', 'p.S AS S', 'p.HD AS HD', 'p.IP AS IP', 'p.ER AS ER',

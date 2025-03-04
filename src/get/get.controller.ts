@@ -30,6 +30,5 @@ export class GetController {
     async pitcherRank() {
         return this.getService.getPictcherRank()
     }
-
     
 }

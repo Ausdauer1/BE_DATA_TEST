@@ -496,6 +496,31 @@ export class ScrapService {
     }
       
   }
+
+  async getPlayerImg() {
+    const players: PLAYER_INFO[] = await this.playerInfoRepository.createQueryBuilder('playerInfo')
+          .select(['playerInfo.id','playerInfo.kbo_id','playerInfo.name','playerInfo.team'])
+          .where('playerInfo.kbo_id IS NOT NULL')
+          .getMany();
+
+    
+        const browser = await puppeteer.launch({headless: false, protocolTimeout: 900000});
+        const page = await browser.newPage();
+        
+        for (let player of players) {
+          await page.goto(`https://m.sports.naver.com/player/index?from=sports&category=kbo&playerId=${player.kbo_id}&tab=record`, { waitUntil: 'domcontentloaded', timeout: 9000000 });
+          await page.waitForSelector('#content > div > div > div:nth-child(5) > div.best_player_ranking > div > span.image > img')
+          
+          let content = await page.content();
+          let $ = cheerio.load(content);
+          const imgSrc = $(`#content > div > div > div:nth-child(5) > div.best_player_ranking > div > span.image > img`)[0]['attribs']['src'];
+
+          Object.assign(player, { image_url: imgSrc });
+          console.log(player)
+          await this.playerInfoRepository.save(player)
+
+        }
+  }
 }
 // class = . 
 // id = # or [id=]

@@ -43,6 +43,9 @@ export class PLAYER_INFO {
     @Column("char", {length: 5, nullable: true})
     statiz_id: string;
 
+    @Column("varchar", {nullable: true})
+    image_url: string;
+
     @Column("char", {length : 10, default: "n"})
     del_yn: string;
 
@@ -63,6 +66,8 @@ export class PLAYER_INFO {
 
     @OneToMany(() => TOTAL_RECORD_PITCHER, trp => trp.pi)
     trps: TOTAL_RECORD_PITCHER[];
+
+
     
 
 }

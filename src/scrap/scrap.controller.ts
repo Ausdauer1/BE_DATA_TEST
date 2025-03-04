@@ -47,4 +47,9 @@ export class ScrapController {
     return this.scrapTotalRecentService.careerRecord2()
   }
 
+  @Get('img')
+  async playerImg() {
+      return this.scrapingService.getPlayerImg()
+  }
+
 }
