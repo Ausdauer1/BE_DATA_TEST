@@ -72,13 +72,14 @@ export class AppModule implements NestModule {
         }),
       )
       .forRoutes('*'); // 모든 경로에 세션 적용
+      
       // Apply session checking middleware to protected routes
     consumer
     .apply(CheckSessionMiddleware)
     .forRoutes(
       // { path: 'player/detail', method: RequestMethod.ALL },
       // { path: 'player/search', method: RequestMethod.ALL },
-      // { path: 'community/*', method: RequestMethod.POST}
+      { path: 'community/*', method: RequestMethod.POST}
     ); // Apply CheckSessionMiddleware only to 'protected'
   }
 }
