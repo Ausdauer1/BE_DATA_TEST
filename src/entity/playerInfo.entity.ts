@@ -46,6 +46,9 @@ export class PLAYER_INFO {
     @Column("varchar", {nullable: true})
     image_url: string;
 
+    @Column("varchar", {nullable: true})
+    income: string;
+
     @Column("char", {length : 10, default: "n"})
     del_yn: string;
 

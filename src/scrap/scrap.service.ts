@@ -521,6 +521,52 @@ export class ScrapService {
 
         }
   }
+
+  async getPlayerIncome() {
+    const players: PLAYER_INFO[] = await this.playerInfoRepository.createQueryBuilder('playerInfo')
+          .select(['playerInfo.id','playerInfo.statiz_id','playerInfo.name','playerInfo.team'])
+          .where('playerInfo.statiz_id IS NOT NULL')
+          .andWhere('playerInfo.name = "김선빈"')
+          .getMany();
+
+    
+        const browser = await puppeteer.launch({headless: false, protocolTimeout: 900000});
+        const page = await browser.newPage();
+        
+        for (let player of players) {
+          await page.goto(`https://statiz.sporki.com/player/?m=income&p_no=${player.statiz_id}`, { waitUntil: 'domcontentloaded', timeout: 9000000 });
+          
+          await page.waitForSelector('body > div.warp > div.container > section > div.box_type_boared > div > div > div > div.box_cont > div > table')
+          
+          let content = await page.content();
+          let $ = cheerio.load(content);
+          let lastestYear = $('body > div.warp > div.container > section > div.box_type_boared > div > div > div > div.box_cont > div > table > tbody > tr').length
+          let income = ($(`body > div.warp > div.container > section > div.box_type_boared > div > div > div > div.box_cont > div > table > tbody > tr:nth-child(${lastestYear}) > td:nth-child(2)`).text())
+          console.log(income)
+          let intIncome = Number(income)
+          console.log(intIncome)
+          if (intIncome < 10000) return intIncome.toString(); // 1만 미만은 그대로 반환
+
+          console.log(intIncome)
+          let billion = Math.floor(intIncome / 10000); // 억 단위
+          let tenThousand = intIncome % 10000; // 남은 만원 단위
+
+          let playerIncome: string;
+          if (tenThousand === 0) {
+            playerIncome = `${billion}억`;
+          } else {
+            playerIncome = `${billion}억 ${tenThousand}만원`;
+          }
+          
+          console.log(playerIncome);
+          // const imgSrc = $(`#content > div > div > div:nth-child(5) > div.best_player_ranking > div > span.image > img`)[0]['attribs']['src'];
+
+          Object.assign(player, { income: playerIncome });
+          console.log(player)
+          // await this.playerInfoRepository.save(player)
+
+        }
+  }
 }
 // class = . 
 // id = # or [id=]

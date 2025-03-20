@@ -52,4 +52,9 @@ export class ScrapController {
       return this.scrapingService.getPlayerImg()
   }
 
+  @Get('income')
+  async playerIncome() {
+      return this.scrapingService.getPlayerIncome()
+  }
+
 }
